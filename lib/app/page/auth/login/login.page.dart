@@ -81,16 +81,17 @@ class _LoginPageState extends State<LoginPage> {
                         SliverFillRemaining(
                           hasScrollBody: false,
                           child: Padding(
-                            padding: const EdgeInsets.only(
-                              right: 24,
-                              left: 24,
-                              bottom: 24,
+                            padding: EdgeInsets.only(
+                              right: 24.w,
+                              left: 24.w,
+                              bottom: 24.h,
+                              top: 24.h,
                             ),
                             child: Column(
                               children: [
                                 const Spacer(flex: 1),
                                 DogLogoWidget(),
-                                SizedBox(height: 20.h),
+                                SizedBox(height: 24.h),
                                 Text(
                                   'PetCare Express',
                                   style: Theme.of(context)
@@ -160,12 +161,13 @@ class _LoginPageState extends State<LoginPage> {
                                         primaryText: 'Esqueceu a senha?',
                                         primaryTextColor: AppColors.textSubtle,
                                         fontWeightPrimary: FontWeight.w700,
-                                        onPressed: () {},
+                                        onPressed: () =>
+                                            context.push('/forgot'),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 20.h),
+                                SizedBox(height: 24.h),
                                 PrimaryButtonWidget(
                                   key: const Key(TestKeys.loginSubmitButton),
                                   title: 'Entrar',
@@ -197,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 20.h),
+                                SizedBox(height: 24.h),
                                 TextButtonWidget(
                                   key: Key(TestKeys.loginSignUpButton),
                                   primaryText: 'Não tem uma conta?',

@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'page/auth/forgot/forgot.page.dart';
 import 'page/auth/login/login.page.dart';
 import 'page/auth/register/register.page.dart';
 import 'page/auth/register/terms.page.dart';
@@ -13,5 +14,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/home', builder: (context, state) => HomePage()),
     GoRoute(path: '/register', builder: (context, state) => RegisterPage()),
     GoRoute(path: '/terms', builder: (context, state) => TermsPage()),
+    GoRoute(path: '/forgot', builder: (context, state) => ForgotPasswordPage()),
   ],
 );

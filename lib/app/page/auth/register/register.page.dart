@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/alert_dialog.widget.dart';
+import '../../../core/widgets/paw_logo.widget.dart';
 import '../../../core/widgets/text_field.widget.dart';
 import '../../../core/widgets/primary_button.widget.dart';
 import '../../../core/widgets/diviser.widget.dart';
@@ -70,8 +71,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: EdgeInsets.only(
                               right: 24.w,
                               left: 24.w,
-                              bottom: 14.h,
-                              top: 14.h,
+                              bottom: 24.h,
+                              top: 24.h,
                             ),
                             child: Column(
                               children: [
@@ -80,32 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Container(
-                                      width: 56,
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primary.withValues(
-                                          alpha: 0.1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(16),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.01,
-                                            ),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.pets,
-                                          size: 32,
-                                          color: AppColors.primary,
-                                        ),
-                                      ),
-                                    ),
+                                    PawLogoWidget(),
                                     SizedBox(width: 8.w),
                                     Text(
                                       'PetCare Express',
@@ -116,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 10.h),
+                                SizedBox(height: 20.h),
                                 Text(
                                   'Crie sua conta',
                                   style: Theme.of(context)
@@ -124,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       .displayLarge
                                       ?.copyWith(fontSize: 26.sp),
                                 ),
-                                SizedBox(height: 5.h),
+                                SizedBox(height: 8.h),
                                 Text(
                                   'Cuide do seu melhor amigo com facilidade.',
                                   style: Theme.of(context)
@@ -132,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       .headlineMedium
                                       ?.copyWith(color: AppColors.textSubtle),
                                 ),
-                                SizedBox(height: 10.h),
+                                SizedBox(height: 18.h),
                                 Form(
                                   key: _formKey,
                                   child: Column(
@@ -147,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         prefixIconColor: AppColors.primary,
                                         validator: Validators.validateName,
                                       ),
-                                      SizedBox(height: 8.h),
+                                      SizedBox(height: 12.h),
                                       TextFieldWidget(
                                         controller: emailController,
                                         label: 'E-mail',
@@ -157,7 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         prefixIcon: Icons.email,
                                         prefixIconColor: AppColors.primary,
                                       ),
-                                      SizedBox(height: 8.h),
+                                      SizedBox(height: 12.h),
                                       TextFieldWidget(
                                         controller: passwordController,
                                         label: 'Senha',
@@ -166,7 +142,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         prefixIcon: Icons.lock,
                                         prefixIconColor: AppColors.primary,
                                       ),
-                                      SizedBox(height: 8.h),
+                                      SizedBox(height: 12.h),
                                       TextFieldWidget(
                                         controller: confirmPasswordController,
                                         label: 'Confirmar Senha',
@@ -182,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 10.h),
+                                SizedBox(height: 16.h),
                                 Row(
                                   children: [
                                     Checkbox(
@@ -211,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 10.h),
+                                SizedBox(height: 16.h),
                                 PrimaryButtonWidget(
                                   title: 'Criar Conta',
                                   isLoading: state is RegisterLoading,

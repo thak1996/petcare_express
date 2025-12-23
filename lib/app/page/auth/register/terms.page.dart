@@ -55,7 +55,7 @@ class TermsPage extends StatelessWidget {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
-                      const SizedBox(width: 48),
+                      SizedBox(width: 48.w),
                     ],
                   ),
                   SizedBox(height: 8.h),
@@ -106,7 +106,6 @@ class TermsPage extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 24.h),
-
                                 PrimaryButtonWidget(
                                   title: 'Aceitar e Continuar',
                                   onPressed: () => context.pop(true),

@@ -58,7 +58,7 @@ class AppEffects {
       ),
     ],
   );
-  
+
   static Widget get buildRegisterBackground => Stack(
     children: [
       Positioned(
@@ -85,6 +85,53 @@ class AppEffects {
           ),
         ),
       ),
+      BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+        child: Container(color: Colors.transparent),
+      ),
+    ],
+  );
+
+  static Widget get buildRecoveryBackground => Stack(
+    children: [
+      Positioned(
+        top: 180.h,
+        right: 120.w,
+        child: Container(
+          width: 100.w,
+          height: 100.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFFFFAB91).withValues(alpha: 0.3),
+          ),
+        ),
+      ),
+
+      Positioned(
+        top: 280.h,
+        left: 100.w,
+        child: Container(
+          width: 80.w,
+          height: 80.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF34D399).withValues(alpha: 0.25),
+          ),
+        ),
+      ),
+      Positioned(
+        top: -40.h,
+        right: -40.w,
+        child: Container(
+          width: 220.w,
+          height: 220.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF2B9DEE).withValues(alpha: 0.1),
+          ),
+        ),
+      ),
+
       BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
         child: Container(color: Colors.transparent),
