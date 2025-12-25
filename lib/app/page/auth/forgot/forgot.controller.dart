@@ -16,11 +16,5 @@ class ForgotController extends Cubit<ForgotState> {
     }
   }
 
-  @override
-  Future<void> close() {
-    reset();
-    return super.close();
-  }
-
   void reset() => emit(const ForgotInitial());
 }

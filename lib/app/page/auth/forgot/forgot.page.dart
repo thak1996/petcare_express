@@ -30,6 +30,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
+  void _submitForm(BuildContext context) {
+    FocusScope.of(context).unfocus();
+
+    if (_formKey.currentState?.validate() ?? false) {
+      final controller = context.read<ForgotController>();
+      controller.sendRecovery(_emailController.text);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -52,6 +61,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   title: 'Sucesso',
                   message: 'Enviamos um link de recuperação para seu e-mail.',
                 );
+                
               }
             },
             child: Scaffold(
@@ -133,9 +143,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   isLoading: state is ForgotLoading,
                                   onPressed: (state is ForgotLoading)
                                       ? null
-                                      : () => controller.sendRecovery(
-                                          _emailController.text,
-                                        ),
+                                      : () => _submitForm(context),
                                 ),
                                 const Spacer(flex: 1),
                                 TextButtonWidget(
