@@ -1,30 +1,21 @@
-import '../../../core/models/login.model.dart';
-
 sealed class LoginState {
-  final bool isValid;
-  final LoginModel credentials;
-
-  const LoginState({
-    this.isValid = false,
-    this.credentials = const LoginModel(email: '', password: ''),
-  });
+  const LoginState();
 }
 
 class LoginInitial extends LoginState {
-  const LoginInitial({super.isValid, super.credentials});
+  const LoginInitial();
 }
 
 class LoginLoading extends LoginState {
-  const LoginLoading({required super.credentials}) : super(isValid: false);
+  const LoginLoading();
 }
 
 class LoginSuccess extends LoginState {
-  const LoginSuccess({required super.credentials}) : super(isValid: false);
+  const LoginSuccess();
 }
 
 class LoginError extends LoginState {
   final String message;
 
-  const LoginError(this.message, {required super.credentials})
-    : super(isValid: false);
+  const LoginError(this.message);
 }

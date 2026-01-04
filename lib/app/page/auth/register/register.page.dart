@@ -1,8 +1,10 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/models/login.model.dart';
 import '../../../core/widgets/alert_dialog.widget.dart';
 import '../../../core/widgets/paw_logo.widget.dart';
 import '../../../core/widgets/text_field.widget.dart';
@@ -45,9 +47,11 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState?.validate() ?? false) {
       final controller = context.read<RegisterController>();
       controller.register(
-        _emailController.text,
-        _passwordController.text,
-        _nameController.text,
+        LoginModel(
+          email: _emailController.text,
+          password: _passwordController.text,
+          name: _nameController.text,
+        ),
       );
     }
   }
@@ -186,7 +190,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     secondaryTextColor: AppColors.link,
                                     onPressed: () async {
                                       final result = await context.push(
-                                        '/terms',
+                                        '/termsLogin',
                                       );
                                       final accepted = (result == true);
                                       if (accepted) {
@@ -214,7 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       color: AppColors.textMain,
                                       size: 24.sp,
                                     ),
-                                    onTap: () {},
+                                    onTap: () => log('Login Google'),
                                   ),
                                   SizedBox(width: 16.w),
                                   SocialLoginButtonWidget(
@@ -223,7 +227,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       size: 28.sp,
                                       color: AppColors.textMain,
                                     ),
-                                    onTap: () {},
+                                    onTap: () => log('Login Apple'),
                                   ),
                                 ],
                               ),

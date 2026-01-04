@@ -1,4 +1,4 @@
-abstract class RegisterState {
+sealed class RegisterState {
   const RegisterState();
 }
 

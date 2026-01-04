@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/models/login.model.dart';
 import '../../../core/theme/app.colors.dart';
 import '../../../core/theme/app.effects.dart';
 import '../../../core/widgets/alert_dialog.widget.dart';
@@ -35,7 +36,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
     if (_formKey.currentState?.validate() ?? false) {
       final controller = context.read<ForgotController>();
-      controller.sendRecovery(_emailController.text);
+      controller.sendRecovery(LoginModel(email: _emailController.text));
     }
   }
 

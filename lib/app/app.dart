@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appRouter = context.read<AppRouter>().router;
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       splitScreenMode: true,

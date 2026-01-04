@@ -1,15 +1,16 @@
 import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/models/login.model.dart';
 import 'forgot.state.dart';
 
 class ForgotController extends Cubit<ForgotState> {
   ForgotController() : super(const ForgotInitial());
 
-  Future<void> sendRecovery(String email) async {
+  Future<void> sendRecovery(LoginModel loginModel) async {
     try {
       emit(const ForgotLoading());
       await Future.delayed(const Duration(seconds: 2));
-      log('recovery email: $email');
+      log('recovery email: ${loginModel.email}');
       emit(const ForgotSuccess());
     } catch (e) {
       emit(ForgotError(e.toString()));
