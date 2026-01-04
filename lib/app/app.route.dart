@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'page/auth/forgot/forgot.page.dart';
 import 'page/auth/login/login.page.dart';
 import 'page/auth/register/register.page.dart';
-import 'page/auth/register/terms.page.dart';
+import 'page/auth/terms/terms.page.dart';
 import 'page/auth/splash/splash.page.dart';
 import 'page/home/home.page.dart';
 

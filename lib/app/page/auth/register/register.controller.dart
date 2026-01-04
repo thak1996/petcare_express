@@ -11,7 +11,7 @@ class RegisterController extends Cubit<RegisterState> {
 
   void setAcceptedTerms(bool value) => _acceptedTerms = value;
 
-  Future<void> register(String email, String password) async {
+  Future<void> register(String email, String password, String name) async {
     try {
       emit(const RegisterLoading());
       if (!_acceptedTerms) {
@@ -20,6 +20,7 @@ class RegisterController extends Cubit<RegisterState> {
       }
       log('email: $email');
       log('password: $password');
+      log('name: $name');
       emit(const RegisterSuccess());
     } catch (e) {
       emit(RegisterError(e.toString()));
