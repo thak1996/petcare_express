@@ -1,6 +1,3 @@
-// lib/app/core/constants/test_keys.dart
-// Chaves para testes automatizados
-
 class TestKeys {
   // ===== LOGIN PAGE =====
   static const String loginPageForm = 'login_form_key';

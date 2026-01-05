@@ -1,23 +1,19 @@
-import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/models/login.model.dart';
-import '../../../core/service/storage/token.storage.dart';
+import '../../../core/models/auth/login.model.dart';
+import '../../../core/repository/auth.repository.dart';
 import 'login.state.dart';
 
 class LoginController extends Cubit<LoginState> {
-  LoginController(this._secureStorageService) : super(const LoginInitial());
+  LoginController(this._authRepository) : super(const LoginInitial());
 
-  // ignore: unused_field
-  final ITokenStorage _secureStorageService;
+  final IAuthRepository _authRepository;
 
   Future<void> login(LoginModel loginModel) async {
     emit(const LoginLoading());
-    try {
-      await Future.delayed(const Duration(seconds: 2));
-      log('email: ${loginModel.email}');
-      emit(const LoginSuccess());
-    } catch (e) {
-      emit(LoginError(e.toString()));
-    }
+    final result = await _authRepository.loginWithEmail(loginModel);
+    result.fold(
+      (onSuccess) => emit(const LoginSuccess()),
+      (onFailure) => emit(LoginError(onFailure.toString())),
+    );
   }
 }

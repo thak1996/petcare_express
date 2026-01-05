@@ -5,8 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/test_keys.dart';
-import '../../../core/models/login.model.dart';
-import '../../../core/service/storage/token.storage.dart';
+import '../../../core/models/auth/login.model.dart';
+import '../../../core/repository/auth.repository.dart';
 import '../../../core/theme/app.colors.dart';
 import '../../../core/theme/app.effects.dart';
 import '../../../core/utils/validators.dart';
@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (context) => LoginController(context.read<ITokenStorage>()),
+    create: (context) => LoginController(context.read<IAuthRepository>()),
     child: BlocBuilder<LoginController, LoginState>(
       builder: (context, state) => BlocListener<LoginController, LoginState>(
         listener: (context, state) {
@@ -98,7 +98,10 @@ class _LoginPageState extends State<LoginPage> {
                             Text(
                               'Cuidando do seu melhor amigo.',
                               style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(color: AppColors.textSubtle),
+                                  ?.copyWith(
+                                    color: AppColors.textSubtle,
+                                    fontSize: 18.sp,
+                                  ),
                             ),
                             const Spacer(flex: 1),
                             Form(

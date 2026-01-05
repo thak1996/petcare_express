@@ -138,4 +138,39 @@ class AppEffects {
       ),
     ],
   );
+
+  static Widget get buildRecoverySplash => Stack(
+    children: [
+      Positioned(
+        top: -100.h,
+        left: -100.w,
+        child: Container(
+          width: 300.w,
+          height: 300.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF13ECEC).withValues(alpha: 0.1),
+          ),
+        ),
+      ),
+
+      Positioned(
+        bottom: -120.h,
+        right: -120.w,
+        child: Container(
+          width: 400.w,
+          height: 400.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFFFFAB91).withValues(alpha: 0.1),
+          ),
+        ),
+      ),
+
+      BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
+        child: Container(color: Colors.transparent),
+      ),
+    ],
+  );
 }

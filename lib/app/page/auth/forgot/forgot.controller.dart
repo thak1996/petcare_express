@@ -1,21 +1,19 @@
-import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/models/login.model.dart';
+import '../../../core/models/auth/login.model.dart';
+import '../../../core/repository/auth.repository.dart';
 import 'forgot.state.dart';
 
 class ForgotController extends Cubit<ForgotState> {
-  ForgotController() : super(const ForgotInitial());
+  ForgotController(this._authRepository) : super(const ForgotInitial());
+
+  final IAuthRepository _authRepository;
 
   Future<void> sendRecovery(LoginModel loginModel) async {
-    try {
-      emit(const ForgotLoading());
-      await Future.delayed(const Duration(seconds: 2));
-      log('recovery email: ${loginModel.email}');
-      emit(const ForgotSuccess());
-    } catch (e) {
-      emit(ForgotError(e.toString()));
-    }
+    emit(const ForgotLoading());
+    final result = await _authRepository.forgotPassword(loginModel);
+    result.fold(
+      (onSuccess) => emit(const ForgotSuccess()),
+      (onFailure) => emit(ForgotError(onFailure.toString())),
+    );
   }
-
-  void reset() => emit(const ForgotInitial());
 }

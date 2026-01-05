@@ -15,30 +15,33 @@ class AppRouter {
   late final GoRouter router = GoRouter(
     initialLocation: '/',
     redirect: (context, state) async {
-      final String? token = await _tokenStorage.getToken();
-      final bool isLoggingIn =
-          state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register' ||
-          state.matchedLocation == '/forgot';
+      final location = state.matchedLocation;
 
-      if (token == null) {
-        return isLoggingIn ? null : '/login';
-      }
-      if (isLoggingIn) {
-        return '/home';
-      }
+      final isSplash = location == '/';
+      if (isSplash) return null;
+
+      final token = await _tokenStorage.getToken();
+
+      final authFormRoutes = {'/login', '/register', '/forgot', '/termsLogin'};
+      final isInsideAuthForms = authFormRoutes.contains(location);
+      if (token == null && !isInsideAuthForms) return '/login';
+      if (token != null && isInsideAuthForms) return '/home';
+
       return null;
     },
     routes: [
+      // AUTH ROUTES
       GoRoute(path: '/', builder: (context, state) => SplashPage()),
       GoRoute(path: '/login', builder: (context, state) => LoginPage()),
-      GoRoute(path: '/home', builder: (context, state) => HomePage()),
       GoRoute(path: '/register', builder: (context, state) => RegisterPage()),
-      GoRoute(path: '/termsLogin', builder: (context, state) => TermsPage()),
       GoRoute(
         path: '/forgot',
         builder: (context, state) => ForgotPasswordPage(),
       ),
+      GoRoute(path: '/termsLogin', builder: (context, state) => TermsPage()),
+
+      // FEATURES ROUTES
+      GoRoute(path: '/home', builder: (context, state) => HomePage()),
     ],
   );
 }

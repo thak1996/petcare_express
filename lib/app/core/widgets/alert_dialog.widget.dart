@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AlertDialogWidget extends StatelessWidget {
   const AlertDialogWidget({
@@ -20,20 +21,29 @@ class AlertDialogWidget extends StatelessWidget {
   }) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialogWidget(
-            title: title,
-            message: message,
-            buttonText: buttonText,
-          ),
+      builder: (context) => AlertDialogWidget(
+        title: title,
+        message: message,
+        buttonText: buttonText,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
-      content: Text(message, style: Theme.of(context).textTheme.bodyMedium),
+      title: Text(
+        title,
+        style: Theme.of(
+          context,
+        ).textTheme.headlineSmall?.copyWith(fontSize: 16.sp),
+      ),
+      content: Text(
+        message,
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(fontSize: 12.sp),
+      ),
       actions: [
         FilledButton(
           onPressed: () => Navigator.pop(context),

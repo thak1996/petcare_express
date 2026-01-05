@@ -49,7 +49,9 @@ class TermsPage extends StatelessWidget {
                       child: Text(
                         'Termos e Privacidade',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleLarge?.copyWith(fontSize: 16.sp),
                       ),
                     ),
                     SizedBox(width: 48.w),

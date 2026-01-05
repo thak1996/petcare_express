@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/models/login.model.dart';
+import '../../../core/models/auth/login.model.dart';
+import '../../../core/repository/auth.repository.dart';
 import '../../../core/theme/app.colors.dart';
 import '../../../core/theme/app.effects.dart';
 import '../../../core/widgets/alert_dialog.widget.dart';
@@ -42,124 +43,118 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (_) => ForgotController(),
+    create: (_) => ForgotController(context.read<IAuthRepository>()),
     child: BlocBuilder<ForgotController, ForgotState>(
-      builder: (context, state) {
-        final controller = context.read<ForgotController>();
-        return BlocListener<ForgotController, ForgotState>(
-          listener: (context, state) {
-            if (state is ForgotError) {
-              AlertDialogWidget.show(
-                context,
-                title: 'Erro',
-                message: state.message,
-              );
-            }
-            if (state is ForgotSuccess) {
-              AlertDialogWidget.show(
-                context,
-                title: 'Sucesso',
-                message: 'Enviamos um link de recuperação para seu e-mail.',
-              );
-            }
-          },
-          child: Scaffold(
-            backgroundColor: AppColors.background,
-            body: Stack(
-              children: [
-                AppEffects.buildRecoveryBackground,
-                SafeArea(
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            right: 24.w,
-                            left: 24.w,
-                            top: 24.h,
-                            bottom: 24.h,
-                          ),
-                          child: Column(
-                            children: [
-                              const Spacer(flex: 1),
-                              PawLogoWidget(
-                                sizeContainer: 80.w,
-                                sizeIcon: 60.w,
-                                border: PawLogoBorder.circle,
+      builder: (context, state) => BlocListener<ForgotController, ForgotState>(
+        listener: (context, state) {
+          if (state is ForgotError) {
+            AlertDialogWidget.show(
+              context,
+              title: 'Erro',
+              message: state.message,
+            );
+          }
+          if (state is ForgotSuccess) {
+            AlertDialogWidget.show(
+              context,
+              title: 'Sucesso',
+              message: 'Enviamos um link de recuperação para seu e-mail.',
+            );
+          }
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          body: Stack(
+            children: [
+              AppEffects.buildRecoveryBackground,
+              SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          right: 24.w,
+                          left: 24.w,
+                          top: 24.h,
+                          bottom: 24.h,
+                        ),
+                        child: Column(
+                          children: [
+                            const Spacer(flex: 1),
+                            PawLogoWidget(
+                              sizeContainer: 80.w,
+                              sizeIcon: 60.w,
+                              border: PawLogoBorder.circle,
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              'Recuperar senha',
+                              style: Theme.of(context).textTheme.displayLarge
+                                  ?.copyWith(fontSize: 24.sp),
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              'Insira o e-mail associado à sua conta. Enviaremos um link para redefinir sua senha.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.headlineMedium
+                                  ?.copyWith(
+                                    color: AppColors.textSubtle,
+                                    fontSize: 18.sp,
+                                  ),
+                            ),
+                            SizedBox(height: 24.h),
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    'E-mail',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  TextFieldWidget(
+                                    controller: _emailController,
+                                    label: 'exemplo@petcare.com',
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: Validators.validateEmail,
+                                    prefixIcon: Icons.email,
+                                    prefixIconColor: AppColors.primary,
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 16.h),
-                              Text(
-                                'Recuperar senha',
-                                style: Theme.of(context).textTheme.displayLarge
-                                    ?.copyWith(fontSize: 24.sp),
-                              ),
-                              SizedBox(height: 16.h),
-                              Text(
-                                'Insira o e-mail associado à sua conta. Enviaremos um link para redefinir sua senha.',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(color: AppColors.textSubtle),
-                              ),
-                              SizedBox(height: 24.h),
-                              Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Text(
-                                      'E-mail',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    TextFieldWidget(
-                                      controller: _emailController,
-                                      label: 'exemplo@petcare.com',
-                                      keyboardType: TextInputType.emailAddress,
-                                      validator: Validators.validateEmail,
-                                      prefixIcon: Icons.email,
-                                      prefixIconColor: AppColors.primary,
-                                      onChanged: (value) => controller.reset(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 24.h),
-                              PrimaryButtonWidget(
-                                title: 'Enviar link',
-                                isLoading: state is ForgotLoading,
-                                onPressed: (state is ForgotLoading)
-                                    ? null
-                                    : () => _submitForm(context),
-                              ),
-                              const Spacer(flex: 1),
-                              TextButtonWidget(
-                                primaryText: 'Lembrou a senha?',
-                                secondaryText: 'Entrar',
-                                primaryTextColor: AppColors.textMain,
-                                secondaryTextColor: AppColors.link,
-                                onPressed: () => context.push('/login'),
-                              ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(height: 24.h),
+                            PrimaryButtonWidget(
+                              title: 'Enviar link',
+                              isLoading: state is ForgotLoading,
+                              onPressed: (state is ForgotLoading)
+                                  ? null
+                                  : () => _submitForm(context),
+                            ),
+                            const Spacer(flex: 1),
+                            TextButtonWidget(
+                              primaryText: 'Lembrou a senha?',
+                              secondaryText: 'Entrar',
+                              primaryTextColor: AppColors.textMain,
+                              secondaryTextColor: AppColors.link,
+                              onPressed: () => context.push('/login'),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     ),
   );
 }

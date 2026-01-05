@@ -1,8 +1,9 @@
+import 'app.route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'app.route.dart';
+import 'core/repository/auth.repository.dart';
 import 'core/service/storage/secure_storage.service.dart';
 import 'core/service/storage/token.storage.dart';
 import 'page/auth/forgot/forgot.controller.dart';
@@ -13,21 +14,15 @@ import 'page/auth/login/login.controller.dart';
 class AppProvider {
   static List<SingleChildWidget> get providers => [
     ..._services,
-    ..._repositories,
     ..._domainStorages,
+    ..._repositories,
     ..._controllers,
   ];
 
-  // 1. Camada de Infraestrutura/Serviços
   static final List<SingleChildWidget> _services = [
-    Provider<SecureStorageImpl>(
-      create: (_) => SecureStorageImpl(FlutterSecureStorage()),
+    Provider<ISecureStorage>(
+      create: (_) => SecureStorageImpl(const FlutterSecureStorage()),
     ),
-  ];
-
-  // 2. Camada de Repositórios (Firebase, APIs, etc)
-  static final List<SingleChildWidget> _repositories = [
-    // Ex: RepositoryProvider(create: (context) => PetRepository(context.read())),
   ];
 
   static final List<SingleChildWidget> _domainStorages = [
@@ -39,13 +34,24 @@ class AppProvider {
     ),
   ];
 
-  // 3. Camada de Gerenciamento de Estado (BLoCs)
-  static final List<SingleChildWidget> _controllers = [
-    BlocProvider<HomeController>(create: (_) => HomeController()),
-    BlocProvider<LoginController>(
-      create: (context) => LoginController(context.read<ITokenStorage>()),
+  static final List<SingleChildWidget> _repositories = [
+    ProxyProvider<ITokenStorage, IAuthRepository>(
+      update: (_, tokenStorage, __) => AuthRepositoryImpl(tokenStorage),
     ),
-    BlocProvider<RegisterController>(create: (_) => RegisterController()),
-    BlocProvider<ForgotController>(create: (_) => ForgotController()),
+  ];
+
+  static final List<SingleChildWidget> _controllers = [
+    BlocProvider<HomeController>(
+      create: (context) => HomeController(context.read<IAuthRepository>()),
+    ),
+    BlocProvider<LoginController>(
+      create: (context) => LoginController(context.read<IAuthRepository>()),
+    ),
+    BlocProvider<RegisterController>(
+      create: (context) => RegisterController(context.read<IAuthRepository>()),
+    ),
+    BlocProvider<ForgotController>(
+      create: (context) => ForgotController(context.read<IAuthRepository>()),
+    ),
   ];
 }

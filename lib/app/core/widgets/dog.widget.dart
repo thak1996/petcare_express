@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../theme/app.colors.dart';
 
 class DogLogoWidget extends StatelessWidget {
-  const DogLogoWidget({super.key});
+  const DogLogoWidget({super.key, this.size});
+
+  final double? size;
 
   final String imageUrl =
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDorGdl42NgnEGg8DOMbmVJ_07ZDWqmRFW87ig7i-Jsc0hBOXPqzqju1CkbbxwabKIbbkJG5YkfZQI7ad6DWHD4P8fTVCYR6QfYcK65PXpkq3NqjRtCuF0AFcfV0XDT7SCV69GIJm6n5fhF1g14DfjxPW_HIPvvA9-xI1MOcqHeAaRNcmaDIzpR72gWoxa92xS85x7IciiXODt0Y3G_w_F21-n2Xn6HSLwuhEgTViqB0HmF6ClUrxuwzd9AiRNj4zUml7dUjVZyAdCS';
@@ -25,8 +27,8 @@ class DogLogoWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         child: Image.network(
           imageUrl,
-          width: 75.w,
-          height: 75.h,
+          width: size ?? 75.w,
+          height: size ?? 75.h,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Icon(Icons.security, size: 64.r, color: AppColors.primary);

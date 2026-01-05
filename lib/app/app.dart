@@ -10,21 +10,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appRouter = context.read<AppRouter>().router;
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       splitScreenMode: true,
       builder: (context, child) {
         return MultiProvider(
           providers: AppProvider.providers,
-          child: MaterialApp.router(
-            title: 'PetCare Express',
-            darkTheme: AppTheme.darkTheme,
-            theme: AppTheme.lightTheme,
-            themeMode: ThemeMode.light,
-            debugShowCheckedModeBanner: false,
-            routerConfig: appRouter,
-          ),
+          builder: (context, child) {
+            final appRouter = context.read<AppRouter>().router;
+            return MaterialApp.router(
+              title: 'PetCare Express',
+              darkTheme: AppTheme.darkTheme,
+              theme: AppTheme.lightTheme,
+              themeMode: ThemeMode.light,
+              debugShowCheckedModeBanner: false,
+              routerConfig: appRouter,
+            );
+          },
         );
       },
     );
