@@ -1,4 +1,5 @@
 import 'package:result_dart/result_dart.dart';
+import '../exceptions/auth.exception.dart';
 import '../models/auth/login.model.dart';
 import '../models/auth/register.model.dart';
 import '../service/storage/token.storage.dart';
@@ -24,10 +25,10 @@ class AuthRepositoryImpl implements IAuthRepository {
         await _tokenStorage.saveToken("meu_jwt_seguro_123");
         return Success(unit);
       } else {
-        return Failure(Exception("E-mail ou senha inválidos"));
+        return Failure(InvalidCredentialsException());
       }
     } on Exception catch (e) {
-      return Failure(e);
+      return Failure(UnknownAuthException(e.toString()));
     }
   }
 
@@ -38,7 +39,7 @@ class AuthRepositoryImpl implements IAuthRepository {
       await _tokenStorage.saveToken("meu_jwt_seguro_123");
       return Success(unit);
     } on Exception catch (e) {
-      return Failure(e);
+      return Failure(UnknownAuthException(e.toString()));
     }
   }
 
@@ -48,7 +49,7 @@ class AuthRepositoryImpl implements IAuthRepository {
       await Future.delayed(const Duration(seconds: 1));
       return Success(unit);
     } on Exception catch (e) {
-      return Failure(e);
+      return Failure(UnknownAuthException(e.toString()));
     }
   }
 

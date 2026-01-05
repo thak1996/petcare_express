@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"petcare-express","appId":"1:924623275792:android:163b752a5f2b87feba0795","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"petcare-express","configurations":{"android":"1:924623275792:android:163b752a5f2b87feba0795","ios":"1:924623275792:ios:82779c455372e343ba0795"}}}}}}

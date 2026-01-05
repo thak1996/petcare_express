@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "924623275792",
+    "project_id": "petcare-express",
+    "storage_bucket": "petcare-express.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924623275792:android:163b752a5f2b87feba0795",
+        "android_client_info": {
+          "package_name": "com.thak.petcare.petcare_express"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr3U5UJBOBN3gSuJ6Tzb8shDwnJXGCJkg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
