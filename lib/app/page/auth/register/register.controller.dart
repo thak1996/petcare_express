@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:petcare_express/app/core/models/auth/login.model.dart';
+import 'package:petcare_express/app/core/models/auth/user.model.dart';
 import '../../../core/repository/auth.repository.dart';
 import 'register.state.dart';
 
@@ -14,13 +14,13 @@ class RegisterController extends Cubit<RegisterState> {
 
   void setAcceptedTerms(bool value) => _acceptedTerms = value;
 
-  Future<void> register(LoginModel loginModel) async {
+  Future<void> register(UserModel userModel ) async {
     emit(const RegisterLoading());
     if (!_acceptedTerms) {
       emit(const RegisterError('Você deve aceitar os termos e condições'));
       return;
     }
-    final result = await _authRepository.loginWithEmail(loginModel);
+    final result = await _authRepository.register(userModel);
     result.fold(
       (onSuccess) => emit(const RegisterSuccess()),
       (onFailure) => emit(RegisterError(onFailure.toString())),

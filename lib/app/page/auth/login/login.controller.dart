@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/models/auth/login.model.dart';
+import '../../../core/models/auth/user.model.dart';
 import '../../../core/repository/auth.repository.dart';
 import 'login.state.dart';
 
@@ -8,9 +8,9 @@ class LoginController extends Cubit<LoginState> {
 
   final IAuthRepository _authRepository;
 
-  Future<void> login(LoginModel loginModel) async {
+  Future<void> login(UserModel userModel) async {
     emit(const LoginLoading());
-    final result = await _authRepository.loginWithEmail(loginModel);
+    final result = await _authRepository.loginWithEmail(userModel);
     result.fold(
       (onSuccess) => emit(const LoginSuccess()),
       (onFailure) => emit(LoginError(onFailure.toString())),

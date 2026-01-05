@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'app.route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'core/repository/auth.repository.dart';
+import 'core/service/firebase/firebase_auth.service.dart';
 import 'core/service/storage/secure_storage.service.dart';
 import 'core/service/storage/token.storage.dart';
 import 'page/auth/forgot/forgot.controller.dart';
@@ -23,6 +25,9 @@ class AppProvider {
     Provider<ISecureStorage>(
       create: (_) => SecureStorageImpl(const FlutterSecureStorage()),
     ),
+    Provider<IFirebaseAuthService>(
+      create: (_) => FirebaseAuthServiceImpl(FirebaseAuth.instance),
+    ),
   ];
 
   static final List<SingleChildWidget> _domainStorages = [
@@ -35,8 +40,9 @@ class AppProvider {
   ];
 
   static final List<SingleChildWidget> _repositories = [
-    ProxyProvider<ITokenStorage, IAuthRepository>(
-      update: (_, tokenStorage, __) => AuthRepositoryImpl(tokenStorage),
+    ProxyProvider2<ITokenStorage, IFirebaseAuthService, IAuthRepository>(
+      update: (_, tokenStorage, firebaseAuthService, __) =>
+          AuthRepositoryImpl(tokenStorage, firebaseAuthService),
     ),
   ];
 

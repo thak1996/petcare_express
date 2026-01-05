@@ -1,56 +1,53 @@
+import 'package:petcare_express/app/core/service/firebase/firebase_auth.service.dart';
 import 'package:result_dart/result_dart.dart';
 import '../exceptions/auth.exception.dart';
-import '../models/auth/login.model.dart';
-import '../models/auth/register.model.dart';
+import '../models/auth/user.model.dart';
 import '../service/storage/token.storage.dart';
 
 abstract class IAuthRepository {
-  AsyncResult<Unit> loginWithEmail(LoginModel loginModel);
-  AsyncResult<Unit> register(RegisterModel registerModel);
-  AsyncResult<Unit> forgotPassword(LoginModel loginModel);
+  AsyncResult<Unit> loginWithEmail(UserModel loginModel);
+  AsyncResult<Unit> register(UserModel registerModel);
+  AsyncResult<Unit> forgotPassword(UserModel loginModel);
   AsyncResult<Unit> logout();
 }
 
 class AuthRepositoryImpl implements IAuthRepository {
   final ITokenStorage _tokenStorage;
+  final IFirebaseAuthService _firebaseAuthService;
 
-  AuthRepositoryImpl(this._tokenStorage);
+  AuthRepositoryImpl(this._tokenStorage, this._firebaseAuthService);
 
   @override
-  AsyncResult<Unit> loginWithEmail(LoginModel loginModel) async {
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      if (loginModel.email == "admin@petcare.com" &&
-          loginModel.password == "12345678") {
-        await _tokenStorage.saveToken("meu_jwt_seguro_123");
-        return Success(unit);
-      } else {
-        return Failure(InvalidCredentialsException());
-      }
-    } on Exception catch (e) {
-      return Failure(UnknownAuthException(e.toString()));
-    }
+  AsyncResult<Unit> loginWithEmail(UserModel userModel) async {
+    final result = await _firebaseAuthService.login(
+      email: userModel.email ?? '',
+      password: userModel.password ?? '',
+    );
+    return result.fold((user) async {
+      await _tokenStorage.saveToken(user.token ?? '');
+      return Success(unit);
+    }, (error) => Failure(error));
   }
 
   @override
-  AsyncResult<Unit> register(RegisterModel registerModel) async {
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      await _tokenStorage.saveToken("meu_jwt_seguro_123");
+  AsyncResult<Unit> register(UserModel userModel) async {
+    final result = await _firebaseAuthService.register(
+      userModel.name,
+      email: userModel.email ?? '',
+      password: userModel.password ?? '',
+    );
+    return result.fold((user) async {
+      await _tokenStorage.saveToken(user.token ?? '');
       return Success(unit);
-    } on Exception catch (e) {
-      return Failure(UnknownAuthException(e.toString()));
-    }
+    }, (error) => Failure(error));
   }
 
   @override
-  AsyncResult<Unit> forgotPassword(LoginModel loginModel) async {
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      return Success(unit);
-    } on Exception catch (e) {
-      return Failure(UnknownAuthException(e.toString()));
-    }
+  AsyncResult<Unit> forgotPassword(UserModel userModel) async {
+    final result = await _firebaseAuthService.forgotPassword(
+      email: userModel.email ?? '',
+    );
+    return result;
   }
 
   @override

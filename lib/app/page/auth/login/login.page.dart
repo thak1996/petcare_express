@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/test_keys.dart';
-import '../../../core/models/auth/login.model.dart';
+import '../../../core/models/auth/user.model.dart';
 import '../../../core/repository/auth.repository.dart';
 import '../../../core/theme/app.colors.dart';
 import '../../../core/theme/app.effects.dart';
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_formKey.currentState?.validate() ?? false) {
       context.read<LoginController>().login(
-        LoginModel(
+        UserModel(
           email: _emailController.text,
           password: _passwordController.text,
         ),

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/models/auth/login.model.dart';
+import '../../../core/models/auth/user.model.dart';
 import '../../../core/repository/auth.repository.dart';
 import '../../../core/widgets/alert_dialog.widget.dart';
 import '../../../core/widgets/paw_logo.widget.dart';
@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState?.validate() ?? false) {
       final controller = context.read<RegisterController>();
       controller.register(
-        LoginModel(
+        UserModel(
           email: _emailController.text,
           password: _passwordController.text,
           name: _nameController.text,
