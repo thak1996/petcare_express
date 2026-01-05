@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 class Validators {
   static String? validateName(String? value) {
     if (value == null || value.isEmpty) {
