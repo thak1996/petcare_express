@@ -44,10 +44,9 @@ class AuthRepositoryImpl implements IAuthRepository {
 
   @override
   AsyncResult<Unit> forgotPassword(UserModel userModel) async {
-    final result = await _firebaseAuthService.forgotPassword(
+    return await _firebaseAuthService.forgotPassword(
       email: userModel.email ?? '',
     );
-    return result;
   }
 
   @override
