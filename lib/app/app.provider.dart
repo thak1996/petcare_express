@@ -10,7 +10,7 @@ import 'core/service/storage/secure_storage.service.dart';
 import 'core/service/storage/token.storage.dart';
 import 'page/auth/forgot/forgot.controller.dart';
 import 'page/auth/register/register.controller.dart';
-import 'page/features/home/home.controller.dart';
+// import 'page/features/home/home.controller.dart';
 import 'page/auth/login/login.controller.dart';
 
 class AppProvider {
@@ -47,9 +47,23 @@ class AppProvider {
   ];
 
   static final List<SingleChildWidget> _controllers = [
-    BlocProvider<HomeController>(
-      create: (context) => HomeController(context.read<IAuthRepository>()),
-    ),
+    // BlocProvider<DashboardController>(
+    //   create: (context) =>
+    //       DashboardController(context.read<IAuthRepository>())
+    //         ..add(LoadDashboard()),
+    // ),
+    // BlocProvider<HistoryController>(
+    //   create: (context) =>
+    //       HistoryController(context.read<IPetRepository>())
+    //         ..add(LoadVaccinationHistory()),
+    // ),
+    // BlocProvider<CalendarController>(
+    //   create: (context) =>
+    //       CalendarController(context.read<IAppointmentRepository>()),
+    // ),
+    // BlocProvider<ProfileController>(
+    //   create: (context) => ProfileController(context.read<IAuthRepository>()),
+    // ),
     BlocProvider<LoginController>(
       create: (context) => LoginController(context.read<IAuthRepository>()),
     ),

@@ -5,7 +5,7 @@ import 'page/auth/login/login.page.dart';
 import 'page/auth/register/register.page.dart';
 import 'page/auth/terms/terms.page.dart';
 import 'page/auth/splash/splash.page.dart';
-import 'page/features/home/home.page.dart';
+import 'page/features/home/main_shell.page.dart';
 
 class AppRouter {
   final ITokenStorage _tokenStorage;
@@ -41,7 +41,10 @@ class AppRouter {
       GoRoute(path: '/termsLogin', builder: (context, state) => TermsPage()),
 
       // FEATURES ROUTES
-      GoRoute(path: '/home', builder: (context, state) => HomePage()),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => const MainShellView(),
+      ),
     ],
   );
 }
