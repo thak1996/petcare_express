@@ -5,10 +5,10 @@ import 'package:petcare_express/app/core/theme/app.colors.dart';
 import 'package:petcare_express/app/core/utils/auth.extension.dart';
 import 'package:petcare_express/app/core/widgets/logout_button.widget.dart';
 import '../../../core/repository/auth.repository.dart';
-import 'tabs/calendar/calendar_tab.dart';
-import 'tabs/dashboard/dashboard_tab.dart';
-import 'tabs/history/history_tab.dart';
-import 'tabs/profile/profile_tab.dart';
+import 'tabs/calendar/calendar.tab.dart';
+import 'tabs/dashboard/dashboard.tab.dart';
+import 'tabs/history/history.tab.dart';
+import 'tabs/profile/profile.tab.dart';
 import 'widgets/petcare_navigation_bar.widget.dart';
 // import 'home.controller.dart';
 

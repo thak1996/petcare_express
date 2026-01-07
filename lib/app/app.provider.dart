@@ -12,6 +12,7 @@ import 'page/auth/forgot/forgot.controller.dart';
 import 'page/auth/register/register.controller.dart';
 // import 'page/features/home/home.controller.dart';
 import 'page/auth/login/login.controller.dart';
+import 'page/features/home/tabs/dashboard/dashboard.controller.dart';
 
 class AppProvider {
   static List<SingleChildWidget> get providers => [
@@ -47,11 +48,10 @@ class AppProvider {
   ];
 
   static final List<SingleChildWidget> _controllers = [
-    // BlocProvider<DashboardController>(
-    //   create: (context) =>
-    //       DashboardController(context.read<IAuthRepository>())
-    //         ..add(LoadDashboard()),
-    // ),
+    BlocProvider<DashBoardTabController>(
+      create: (context) =>
+          DashBoardTabController(context.read<IAuthRepository>()),
+    ),
     // BlocProvider<HistoryController>(
     //   create: (context) =>
     //       HistoryController(context.read<IPetRepository>())
