@@ -39,11 +39,13 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _submitForm(BuildContext context) {
+  void _submitForm({
+    required BuildContext context,
+    required LoginController controller,
+  }) {
     FocusScope.of(context).unfocus();
-
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<LoginController>().login(
+      controller.login(
         UserModel(
           email: _emailController.text,
           password: _passwordController.text,
@@ -54,9 +56,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (context) => LoginController(context.read<IAuthRepository>()),
-    child: BlocBuilder<LoginController, LoginState>(
-      builder: (context, state) => BlocListener<LoginController, LoginState>(
+    create: (_) => LoginController(context.read<IAuthRepository>()),
+    child: Scaffold(
+      backgroundColor: AppColors.background,
+      body: BlocConsumer<LoginController, LoginState>(
         listener: (context, state) {
           if (state is LoginError) {
             AlertDialogWidget.show(
@@ -67,9 +70,9 @@ class _LoginPageState extends State<LoginPage> {
           }
           if (state is LoginSuccess) context.go('/home');
         },
-        child: Scaffold(
-          backgroundColor: AppColors.background,
-          body: Stack(
+        builder: (context, state) {
+          final controller = context.read<LoginController>();
+          return Stack(
             children: [
               AppEffects.buildBackgroundDecoration,
               SafeArea(
@@ -150,7 +153,10 @@ class _LoginPageState extends State<LoginPage> {
                               isLoading: state is LoginLoading,
                               onPressed: (state is LoginLoading)
                                   ? null
-                                  : () => _submitForm(context),
+                                  : () => _submitForm(
+                                      context: context,
+                                      controller: controller,
+                                    ),
                             ),
                             DivisorWidget(),
                             Row(
@@ -192,8 +198,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ],
-          ),
-        ),
+          );
+        },
       ),
     ),
   );

@@ -4,15 +4,15 @@ import '../../../core/repository/auth.repository.dart';
 import 'forgot.state.dart';
 
 class ForgotController extends Cubit<ForgotState> {
-  ForgotController(this._authRepository) : super(const ForgotInitial());
+  ForgotController(this._authRepository) : super(ForgotInitial());
 
   final IAuthRepository _authRepository;
 
   Future<void> sendRecovery(UserModel userModel) async {
-    emit(const ForgotLoading());
+    emit(ForgotLoading());
     final result = await _authRepository.forgotPassword(userModel);
     result.fold(
-      (onSuccess) => emit(const ForgotSuccess()),
+      (onSuccess) => emit(ForgotSuccess()),
       (onFailure) => emit(ForgotError(onFailure.toString())),
     );
   }

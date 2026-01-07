@@ -32,11 +32,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
-  void _submitForm(BuildContext context) {
+  void _submitForm({
+    required BuildContext context,
+    required ForgotController controller,
+  }) {
     FocusScope.of(context).unfocus();
-
     if (_formKey.currentState?.validate() ?? false) {
-      final controller = context.read<ForgotController>();
       controller.sendRecovery(UserModel(email: _emailController.text));
     }
   }
@@ -44,8 +45,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => ForgotController(context.read<IAuthRepository>()),
-    child: BlocBuilder<ForgotController, ForgotState>(
-      builder: (context, state) => BlocListener<ForgotController, ForgotState>(
+    child: Scaffold(
+      backgroundColor: AppColors.background,
+      body: BlocConsumer<ForgotController, ForgotState>(
         listener: (context, state) {
           if (state is ForgotError) {
             AlertDialogWidget.show(
@@ -62,9 +64,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             );
           }
         },
-        child: Scaffold(
-          backgroundColor: AppColors.background,
-          body: Stack(
+        builder: (context, state) {
+          final controller = context.read<ForgotController>();
+          return Stack(
             children: [
               AppEffects.buildRecoveryBackground,
               SafeArea(
@@ -134,7 +136,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               isLoading: state is ForgotLoading,
                               onPressed: (state is ForgotLoading)
                                   ? null
-                                  : () => _submitForm(context),
+                                  : () => _submitForm(
+                                      context: context,
+                                      controller: controller,
+                                    ),
                             ),
                             const Spacer(flex: 1),
                             TextButtonWidget(
@@ -152,8 +157,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
               ),
             ],
-          ),
-        ),
+          );
+        },
       ),
     ),
   );
