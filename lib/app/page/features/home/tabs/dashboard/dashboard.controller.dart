@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:result_dart/result_dart.dart';
 import '../../../../../core/models/auth/user.model.dart';
@@ -57,7 +55,6 @@ class DashBoardTabController extends Cubit<DashBoardTabState> {
 
   Future<void> dismissNotification(NotificationModel notification) async {
     if (isClosed) return;
-    log("Dismiss notification resulting in ID: ${notification.id}");
     final result = await _notificationRepo.dismissNotification(notification.id);
     if (result.isError()) {
       emit(DashBoardTabError(result.exceptionOrNull().toString()));
