@@ -1,3 +1,5 @@
+import '../../../../../core/models/features/pet.model.dart';
+
 abstract class DashBoardTabState {
   const DashBoardTabState();
 
@@ -9,14 +11,14 @@ class DashBoardTabInitial extends DashBoardTabState {}
 class DashBoardTabLoading extends DashBoardTabState {}
 
 class DashBoardTabSuccess extends DashBoardTabState {
-  // futuramente: final List<PetModel> pets;
+  final List<PetModel> pets;
 
-  const DashBoardTabSuccess({required this.userName});
+  const DashBoardTabSuccess({required this.userName, required this.pets});
 
   final String userName;
 
   @override
-  List<Object?> get props => [userName];
+  List<Object?> get props => [userName, pets];
 }
 
 class DashBoardTabError extends DashBoardTabState {

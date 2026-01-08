@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'core/repository/auth.repository.dart';
+import 'core/repository/pet.repository.dart';
 import 'core/service/firebase/firebase_auth.service.dart';
 import 'core/service/storage/secure_storage.service.dart';
 import 'core/service/storage/token.storage.dart';
@@ -45,25 +46,10 @@ class AppProvider {
       update: (_, tokenStorage, firebaseAuthService, __) =>
           AuthRepositoryImpl(tokenStorage, firebaseAuthService),
     ),
+    Provider<IPetRepository>(create: (context) => PetRepositoryImpl()),
   ];
 
   static final List<SingleChildWidget> _controllers = [
-    BlocProvider<DashBoardTabController>(
-      create: (context) =>
-          DashBoardTabController(context.read<IAuthRepository>()),
-    ),
-    // BlocProvider<HistoryController>(
-    //   create: (context) =>
-    //       HistoryController(context.read<IPetRepository>())
-    //         ..add(LoadVaccinationHistory()),
-    // ),
-    // BlocProvider<CalendarController>(
-    //   create: (context) =>
-    //       CalendarController(context.read<IAppointmentRepository>()),
-    // ),
-    // BlocProvider<ProfileController>(
-    //   create: (context) => ProfileController(context.read<IAuthRepository>()),
-    // ),
     BlocProvider<LoginController>(
       create: (context) => LoginController(context.read<IAuthRepository>()),
     ),
@@ -72,6 +58,12 @@ class AppProvider {
     ),
     BlocProvider<ForgotController>(
       create: (context) => ForgotController(context.read<IAuthRepository>()),
+    ),
+    BlocProvider<DashBoardTabController>(
+      create: (context) => DashBoardTabController(
+        context.read<IAuthRepository>(),
+        context.read<IPetRepository>(),
+      )..loadData(),
     ),
   ];
 }

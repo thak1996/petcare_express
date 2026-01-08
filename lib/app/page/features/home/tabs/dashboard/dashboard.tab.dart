@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:petcare_express/app/core/repository/auth.repository.dart';
 import 'package:petcare_express/app/core/widgets/logout_button.widget.dart';
+import '../../../../../core/models/features/pet.model.dart';
+import '../../../../../core/repository/pet.repository.dart';
 import '../../../../../core/theme/app.colors.dart';
 import '../../../../../core/utils/string.utils.dart';
+import '../../widgets/pet_slider.widget.dart';
 import 'dashboard.controller.dart';
 import 'dashboard.state.dart';
 
@@ -14,23 +17,35 @@ class DashBoardTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          DashBoardTabController(context.read<IAuthRepository>())..loadData(),
+      create: (context) => DashBoardTabController(
+        context.read<IAuthRepository>(),
+        context.read<IPetRepository>(),
+      )..loadData(),
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: BlocConsumer<DashBoardTabController, DashBoardTabState>(
           listener: (context, state) {
-            if (state is DashBoardTabError) {}
+            if (state is DashBoardTabError) {
+              debugPrint('Erro: ${state.message}');
+            }
           },
           builder: (context, state) {
             final controller = context.read<DashBoardTabController>();
+
             if (state is DashBoardTabLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            final userName = (state is DashBoardTabSuccess)
+
+            // 1. Extração segura dos dados do estado
+            final String userName = (state is DashBoardTabSuccess)
                 ? state.userName
-                : 'UserName';
+                : 'Usuário';
+            final List<PetModel> pets = (state is DashBoardTabSuccess)
+                ? state.pets
+                : [];
+
             final formattedName = StringHelper.formatUserName(userName);
+
             return SafeArea(
               child: RefreshIndicator(
                 onRefresh: () async => controller.loadData(),
@@ -38,6 +53,8 @@ class DashBoardTab extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   children: [
                     SizedBox(height: 20.h),
+
+                    // --- Header ---
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -57,6 +74,8 @@ class DashBoardTab extends StatelessWidget {
                                     .textTheme
                                     .headlineMedium
                                     ?.copyWith(fontSize: 18.sp),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
                             ],
                           ),
@@ -64,8 +83,16 @@ class DashBoardTab extends StatelessWidget {
                         _buildNotificationIcon(),
                       ],
                     ),
-                    SizedBox(height: 20.h),
-                    LogoutButtonWidget(),
+                    SizedBox(height: 14.h),
+                    PetSliderWidget(
+                      pets: pets,
+                      onPetPressed: (pet) {
+                        debugPrint('Pet selecionado: ${pet.name}');
+                      },
+                    ),
+
+                    // Botão de Logout
+                    const LogoutButtonWidget(),
                   ],
                 ),
               ),

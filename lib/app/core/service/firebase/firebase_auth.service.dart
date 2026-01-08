@@ -86,7 +86,13 @@ class FirebaseAuthServiceImpl implements IFirebaseAuthService {
     try {
       final firebaseUser = _firebaseAuth.currentUser;
       if (firebaseUser != null) {
-        return Success(UserModel(name: firebaseUser.displayName));
+        return Success(
+          UserModel(
+            name: firebaseUser.displayName,
+            email: firebaseUser.email,
+            id: firebaseUser.uid,
+          ),
+        );
       } else {
         return Failure(AppException.fromType(AppErrorType.unauthenticated));
       }
