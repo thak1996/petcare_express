@@ -66,7 +66,7 @@ class _SplashPageState extends State<SplashPage> {
                         'Cuidando do seu melhor amigo.',
                         style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(
-                              color: AppColors.textSubtle,
+                              color: AppColors.textSubtitle,
                               fontSize: 16.sp,
                             ),
                       ),

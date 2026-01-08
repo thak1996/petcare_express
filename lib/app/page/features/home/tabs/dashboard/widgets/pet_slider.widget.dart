@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/models/features/pet.model.dart';
-import '../../../../core/theme/app.colors.dart';
+import '../../../../../../core/models/features/pet.model.dart';
+import '../../../../../../core/theme/app.colors.dart';
 
 class PetSliderWidget extends StatelessWidget {
   final List<PetModel> pets;
@@ -19,27 +19,30 @@ class PetSliderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Text(
-              "Meus Pets",
-              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(width: 8.w),
-            Icon(Icons.pets, size: 18.sp, color: AppColors.primary),
-          ],
+        Padding(
+          padding: EdgeInsets.only(left: 24.w),
+          child: Row(
+            children: [
+              Text(
+                "Meus Pets",
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(width: 8.w),
+              Icon(Icons.pets, size: 18.sp, color: AppColors.primary),
+            ],
+          ),
         ),
         SizedBox(height: 16.h),
         SizedBox(
-          height: 110.h,
+          height: 100.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            clipBehavior: Clip.none,
             itemCount: pets.length + 1,
             itemBuilder: (context, index) {
-              if (index < pets.length) {
-                return _buildPetItem(pets[index]);
-              }
+              if (index < pets.length) return _buildPetItem(pets[index]);
               return _buildAddPetButton();
             },
           ),

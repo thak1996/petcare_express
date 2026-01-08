@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                               'Cuidando do seu melhor amigo.',
                               style: Theme.of(context).textTheme.headlineMedium
                                   ?.copyWith(
-                                    color: AppColors.textSubtle,
+                                    color: AppColors.textSubtitle,
                                     fontSize: 18.sp,
                                   ),
                             ),
@@ -139,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                     alignment: Alignment.topRight,
                                     primaryText: 'Esqueceu a senha?',
-                                    primaryTextColor: AppColors.textSubtle,
+                                    primaryTextColor: AppColors.textSubtitle,
                                     fontWeightPrimary: FontWeight.w700,
                                     onPressed: () => context.push('/forgot'),
                                   ),

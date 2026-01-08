@@ -27,7 +27,7 @@ abstract class AppColors {
 
   // Text Colors
   static Color get textMain => const Color(0xFF2D3748);
-  static Color get textSubtle => const Color(0xFF718096);
+  static Color get textSubtitle => const Color(0xFF718096);
   static Color get textDisabled => const Color(0xFFBDBDBD);
 
   // Link Colors

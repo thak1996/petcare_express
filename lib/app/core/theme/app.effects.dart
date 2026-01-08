@@ -26,6 +26,58 @@ class AppEffects {
     colors: [Color(0xFF13ECEC), Color(0xFF00D4FF)],
   );
 
+  static Widget get buildDashboardBackground => Stack(
+    children: [
+      Container(color: const Color(0xFFF8F9FA)),
+      Positioned(
+        top: -100.h,
+        left: -100.w,
+        child: Container(
+          width: 350.w,
+          height: 250.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF13ECEC).withValues(alpha: 0.1),
+          ),
+        ),
+      ),
+      Positioned(
+        top: 0.4.sh,
+        right: -80.w,
+        child: Container(
+          width: 300.w,
+          height: 300.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFFFFAB91).withValues(alpha: 0.1),
+          ),
+        ),
+      ),
+      Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 0.4.sh,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                const Color(0xFF13ECEC).withValues(alpha: 0.04),
+                Colors.white.withValues(alpha: 0.0),
+              ],
+            ),
+          ),
+        ),
+      ),
+      BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
+        child: Container(color: Colors.transparent),
+      ),
+    ],
+  );
+
   static Widget get buildBackgroundDecoration => Stack(
     children: [
       Positioned(

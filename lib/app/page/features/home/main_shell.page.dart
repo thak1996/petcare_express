@@ -10,7 +10,6 @@ import 'tabs/dashboard/dashboard.tab.dart';
 import 'tabs/history/history.tab.dart';
 import 'tabs/profile/profile.tab.dart';
 import 'widgets/petcare_navigation_bar.widget.dart';
-// import 'home.controller.dart';
 
 class MainShellView extends StatefulWidget {
   const MainShellView({super.key});
@@ -32,7 +31,8 @@ class _MainShellViewState extends State<MainShellView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      extendBody: true,
+      backgroundColor: Colors.transparent,
       body: IndexedStack(index: _currentIndex, children: _tabs),
       bottomNavigationBar: PetcareNavigationBar(
         currentIndex: _currentIndex,

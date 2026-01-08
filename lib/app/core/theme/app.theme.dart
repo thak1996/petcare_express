@@ -57,18 +57,18 @@ class AppTheme {
             bodyLarge: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               letterSpacing: 0.15,
-              color: AppColors.textSubtle,
+              color: AppColors.textSubtitle,
             ),
             bodyMedium: GoogleFonts.plusJakartaSans(
               fontSize: 12,
               letterSpacing: 0.15,
-              color: AppColors.textSubtle,
+              color: AppColors.textSubtitle,
             ),
             labelLarge: GoogleFonts.plusJakartaSans(
               fontSize: 12,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.1,
-              color: AppColors.textSubtle,
+              color: AppColors.textSubtitle,
             ),
           ),
       appBarTheme: AppBarTheme(
@@ -145,7 +145,7 @@ class AppTheme {
         filled: true,
         fillColor: AppColors.surface,
         labelStyle: TextStyle(color: AppColors.textMain),
-        hintStyle: TextStyle(color: AppColors.textSubtle),
+        hintStyle: TextStyle(color: AppColors.textSubtitle),
       ),
     );
   }

@@ -91,7 +91,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                               widget.prefixIcon,
                               color:
                                   widget.prefixIconColor ??
-                                  AppColors.textSubtle,
+                                  AppColors.textSubtitle,
                             ),
                           )
                         : null,

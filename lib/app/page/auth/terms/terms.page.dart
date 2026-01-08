@@ -22,7 +22,7 @@ class TermsPage extends StatelessWidget {
       SizedBox(height: 8.h),
       Text(
         body,
-        style: TextStyle(color: AppColors.textSubtle, fontSize: 12.sp),
+        style: TextStyle(color: AppColors.textSubtitle, fontSize: 12.sp),
       ),
       SizedBox(height: 20.h),
     ],
@@ -100,7 +100,7 @@ class TermsPage extends StatelessWidget {
                               Text(
                                 'Última atualização: 24 de Outubro de 2025',
                                 style: TextStyle(
-                                  color: AppColors.textSubtle,
+                                  color: AppColors.textSubtitle,
                                   fontSize: 11.sp,
                                 ),
                               ),

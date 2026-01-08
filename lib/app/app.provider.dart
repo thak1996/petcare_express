@@ -5,13 +5,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'core/repository/auth.repository.dart';
+import 'core/repository/notification.repository.dart';
 import 'core/repository/pet.repository.dart';
 import 'core/service/firebase/firebase_auth.service.dart';
 import 'core/service/storage/secure_storage.service.dart';
 import 'core/service/storage/token.storage.dart';
 import 'page/auth/forgot/forgot.controller.dart';
 import 'page/auth/register/register.controller.dart';
-// import 'page/features/home/home.controller.dart';
 import 'page/auth/login/login.controller.dart';
 import 'page/features/home/tabs/dashboard/dashboard.controller.dart';
 
@@ -47,6 +47,9 @@ class AppProvider {
           AuthRepositoryImpl(tokenStorage, firebaseAuthService),
     ),
     Provider<IPetRepository>(create: (context) => PetRepositoryImpl()),
+    Provider<INotificationRepository>(
+      create: (context) => NotificationRepositoryImpl(),
+    ),
   ];
 
   static final List<SingleChildWidget> _controllers = [
@@ -63,6 +66,7 @@ class AppProvider {
       create: (context) => DashBoardTabController(
         context.read<IAuthRepository>(),
         context.read<IPetRepository>(),
+        context.read<INotificationRepository>(),
       )..loadData(),
     ),
   ];

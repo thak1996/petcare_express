@@ -119,7 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             Text(
                               'Cuide do seu melhor amigo com facilidade.',
                               style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(color: AppColors.textSubtle),
+                                  ?.copyWith(color: AppColors.textSubtitle),
                             ),
                             SizedBox(height: 18.h),
                             Form(

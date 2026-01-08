@@ -101,7 +101,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.headlineMedium
                                   ?.copyWith(
-                                    color: AppColors.textSubtle,
+                                    color: AppColors.textSubtitle,
                                     fontSize: 18.sp,
                                   ),
                             ),

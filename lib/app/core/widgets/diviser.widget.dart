@@ -28,7 +28,7 @@ class _DivisorWidgetState extends State<DivisorWidget> {
               widget.isNewAccount ?? false ? textNewAccount : textDefault,
               style: Theme.of(
                 context,
-              ).textTheme.bodyLarge?.copyWith(color: AppColors.textSubtle),
+              ).textTheme.bodyLarge?.copyWith(color: AppColors.textSubtitle),
             ),
           ),
           Expanded(child: Divider(color: AppColors.grey300, thickness: 1)),
