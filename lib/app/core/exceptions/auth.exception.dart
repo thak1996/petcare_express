@@ -6,6 +6,7 @@ enum AppErrorType {
   emailAlreadyInUse,
   weakPasswordException,
   serverError,
+  unauthenticated,
 }
 
 class AppException extends BaseException {
@@ -39,6 +40,7 @@ class AppException extends BaseException {
       AppErrorType.weakPasswordException => 'A senha é muito fraca.',
       AppErrorType.serverError =>
         'Erro no servidor. Tente novamente mais tarde.',
+      AppErrorType.unauthenticated => 'Usuário não autenticado.',
     };
     return AppException(message, type.toString());
   }

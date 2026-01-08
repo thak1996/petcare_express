@@ -14,6 +14,7 @@ abstract class IFirebaseAuthService {
     required String email,
     required String password,
   });
+  AsyncResult<UserModel> getCurrentUser();
   AsyncResult<Unit> forgotPassword({required String email});
   AsyncResult<Unit> logout();
 }
@@ -78,5 +79,19 @@ class FirebaseAuthServiceImpl implements IFirebaseAuthService {
   AsyncResult<Unit> logout() async {
     await _firebaseAuth.signOut();
     return Success(unit);
+  }
+
+  @override
+  AsyncResult<UserModel> getCurrentUser() async {
+    try {
+      final firebaseUser = _firebaseAuth.currentUser;
+      if (firebaseUser != null) {
+        return Success(UserModel(name: firebaseUser.displayName));
+      } else {
+        return Failure(AppException.fromType(AppErrorType.unauthenticated));
+      }
+    } catch (e) {
+      return Failure(AppException.fromType(AppErrorType.serverError));
+    }
   }
 }

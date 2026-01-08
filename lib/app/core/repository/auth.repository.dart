@@ -8,12 +8,14 @@ abstract class IAuthRepository {
   AsyncResult<Unit> loginWithEmail(UserModel loginModel);
   AsyncResult<Unit> register(UserModel registerModel);
   AsyncResult<Unit> forgotPassword(UserModel loginModel);
+  AsyncResult<UserModel> getCurrentUser();
   AsyncResult<Unit> logout();
 }
 
 class AuthRepositoryImpl implements IAuthRepository {
   final ITokenStorage _tokenStorage;
   final IFirebaseAuthService _firebaseAuthService;
+  UserModel? _cachedUser;
 
   AuthRepositoryImpl(this._tokenStorage, this._firebaseAuthService);
 
@@ -53,5 +55,13 @@ class AuthRepositoryImpl implements IAuthRepository {
   AsyncResult<Unit> logout() async {
     await _tokenStorage.clear();
     return Success(unit);
+  }
+
+  @override
+  AsyncResult<UserModel> getCurrentUser() async {
+    if (_cachedUser != null) return Success(_cachedUser!);
+    final result = await _firebaseAuthService.getCurrentUser();
+    result.fold((user) => _cachedUser = user, (error) {});
+    return result;
   }
 }

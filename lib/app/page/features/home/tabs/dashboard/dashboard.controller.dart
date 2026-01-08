@@ -6,13 +6,13 @@ class DashBoardTabController extends Cubit<DashBoardTabState> {
   DashBoardTabController(this._authRepository) : super(DashBoardTabInitial());
 
   final IAuthRepository _authRepository;
-  
+
   Future<void> loadData() async {
     emit(DashBoardTabLoading());
-    try {
-      emit(const DashBoardTabSuccess(userName: "Ana Clara"));
-    } catch (e) {
-      emit(DashBoardTabError(e.toString()));
-    }
+    final userResult = await _authRepository.getCurrentUser();
+    userResult.fold(
+      (user) => emit(DashBoardTabSuccess(userName: user.name ?? 'UserName')),
+      (error) => emit(DashBoardTabError(error.toString())),
+    );
   }
 }
