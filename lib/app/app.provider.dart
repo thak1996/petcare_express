@@ -7,6 +7,7 @@ import 'package:provider/single_child_widget.dart';
 import 'core/repository/auth.repository.dart';
 import 'core/repository/notification.repository.dart';
 import 'core/repository/pet.repository.dart';
+import 'core/repository/schedule.repository.dart';
 import 'core/service/firebase/firebase_auth.service.dart';
 import 'core/service/storage/secure_storage.service.dart';
 import 'core/service/storage/token.storage.dart';
@@ -50,6 +51,7 @@ class AppProvider {
     Provider<INotificationRepository>(
       create: (context) => NotificationRepositoryImpl(),
     ),
+    Provider<IScheduleRepository>(create: (_) => ScheduleRepositoryImpl()),
   ];
 
   static final List<SingleChildWidget> _controllers = [
@@ -67,6 +69,7 @@ class AppProvider {
         context.read<IAuthRepository>(),
         context.read<IPetRepository>(),
         context.read<INotificationRepository>(),
+        context.read<IScheduleRepository>(),
       )..loadData(),
     ),
   ];

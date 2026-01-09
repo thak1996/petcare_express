@@ -10,31 +10,31 @@ abstract class IPetRepository {
 }
 
 class PetRepositoryImpl implements IPetRepository {
+  final List<PetModel> mockPets = [
+    PetModel(
+      name: "Rex",
+      imageUrl: "https://placedog.net/200",
+      borderColor: Colors.teal,
+      hasWarning: true,
+    ),
+    PetModel(
+      name: "Luna",
+      imageUrl: "https://placedog.net/201",
+      borderColor: Colors.orange,
+      hasWarning: true,
+    ),
+    PetModel(
+      name: "Thor",
+      imageUrl: "https://placedog.net/202",
+      borderColor: Colors.purple,
+      hasWarning: false,
+    ),
+  ];
+  
   @override
   AsyncResult<List<PetModel>> getPetsForUser(String userId) async {
     try {
       await Future.delayed(const Duration(milliseconds: 800));
-      final mockPets = [
-        PetModel(
-          name: "Rex",
-          imageUrl: "https://placedog.net/200",
-          borderColor: Colors.teal,
-          hasWarning: true,
-        ),
-        PetModel(
-          name: "Luna",
-          imageUrl: "https://placedog.net/201",
-          borderColor: Colors.orange,
-          hasWarning: true,
-        ),
-        PetModel(
-          name: "Thor",
-          imageUrl: "https://placedog.net/202",
-          borderColor: Colors.purple,
-          hasWarning: false,
-        ),
-      ];
-
       return Success(mockPets);
     } catch (e) {
       return Failure(Exception("Erro ao buscar pets"));

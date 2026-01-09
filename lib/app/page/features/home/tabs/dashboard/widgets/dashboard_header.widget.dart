@@ -48,12 +48,6 @@ class DashboardHeaderWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
-                    SizedBox(width: 8.w),
-                    Icon(
-                      IonIcons.hand_left,
-                      size: 18.sp,
-                      color: AppColors.primary,
-                    ),
                   ],
                 ),
               ],

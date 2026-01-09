@@ -6,8 +6,10 @@ import 'package:petcare_express/app/core/repository/auth.repository.dart';
 import 'package:petcare_express/app/core/widgets/logout_button.widget.dart';
 import '../../../../../core/models/features/notification.model.dart';
 import '../../../../../core/models/features/pet.model.dart';
+import '../../../../../core/models/features/schedule.model.dart';
 import '../../../../../core/repository/notification.repository.dart';
 import '../../../../../core/repository/pet.repository.dart';
+import '../../../../../core/repository/schedule.repository.dart';
 import '../../../../../core/theme/app.colors.dart';
 import '../../../../../core/theme/app.effects.dart';
 import '../../../../../core/utils/string.utils.dart';
@@ -16,6 +18,8 @@ import 'widgets/dashboard_header.widget.dart';
 import 'widgets/pet_slider.widget.dart';
 import 'dashboard.controller.dart';
 import 'dashboard.state.dart';
+import 'widgets/schedule_card.widget.dart';
+import 'widgets/sub_title.widget.dart';
 
 class DashBoardTab extends StatelessWidget {
   const DashBoardTab({super.key});
@@ -27,6 +31,7 @@ class DashBoardTab extends StatelessWidget {
         context.read<IAuthRepository>(),
         context.read<IPetRepository>(),
         context.read<INotificationRepository>(),
+        context.read<IScheduleRepository>(),
       )..loadData(),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8F9FA),
@@ -56,6 +61,9 @@ class DashBoardTab extends StatelessWidget {
                     : [];
                 final List<NotificationModel> notifications =
                     (state is DashBoardTabSuccess) ? state.notifications : [];
+                final List<ScheduleModel> tasks = (state is DashBoardTabSuccess)
+                    ? state.todayTasks
+                    : [];
                 final formattedName = StringHelper.formatUserName(userName);
                 return SafeArea(
                   child: RefreshIndicator(
@@ -80,7 +88,13 @@ class DashBoardTab extends StatelessWidget {
                         SubTitleWidget(
                           onTap: () => debugPrint('Ver tudo agenda'),
                         ),
-                        const SizedBox(height: 100),
+                        SizedBox(height: 8.h),
+                        ...tasks.map(
+                          (task) => ScheduleCardWidget(
+                            task: task,
+                            onTap: () => controller.toggleTask(task),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -92,46 +106,4 @@ class DashBoardTab extends StatelessWidget {
       ),
     );
   }
-}
-
-class SubTitleWidget extends StatelessWidget {
-  const SubTitleWidget({required this.onTap, super.key});
-
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: 24.w),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          children: [
-            Text(
-              "Agenda de Hoje",
-              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(width: 10.w),
-            Icon(IonIcons.calendar, size: 18.sp, color: AppColors.textSubtitle),
-          ],
-        ),
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8.r),
-          child: Padding(
-            padding: EdgeInsets.all(8.r),
-            child: Text(
-              "Ver tudo",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
 }
