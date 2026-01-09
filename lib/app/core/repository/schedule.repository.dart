@@ -17,6 +17,8 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
       subtitle: 'Veterinário Central',
       type: TaskType.health,
       isDone: false,
+      petId: 'pet1',
+      petName: 'Rex',
     ),
     ScheduleModel(
       id: '2',
@@ -25,6 +27,8 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
       subtitle: 'Ração Premium',
       type: TaskType.food,
       isDone: false,
+      petId: 'pet1',
+      petName: 'Rex',
     ),
     ScheduleModel(
       id: '3',
@@ -33,6 +37,8 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
       subtitle: 'Parque da Cidade',
       type: TaskType.activity,
       isDone: true,
+      petId: 'pet2',
+      petName: 'Luna',
     ),
   ];
   @override
@@ -55,6 +61,8 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
           subtitle: task.subtitle,
           type: task.type,
           isDone: !task.isDone,
+          petId: task.petId,
+          petName: task.petName,
         );
         return Success(unit);
       }

@@ -9,6 +9,9 @@ class ScheduleModel {
   final String subtitle;
   final TaskType type;
   final bool isDone;
+  final String petId;
+  final String petName;
+  final String? petImage;
 
   ScheduleModel({
     required this.id,
@@ -16,6 +19,9 @@ class ScheduleModel {
     required this.time,
     required this.subtitle,
     required this.type,
+    required this.petId,
+    required this.petName,
+    this.petImage,
     this.isDone = false,
   });
 
@@ -38,6 +44,17 @@ class ScheduleModel {
         return Icons.restaurant;
       case TaskType.activity:
         return Icons.pets;
+    }
+  }
+
+  String get translation {
+    switch (type) {
+      case TaskType.health:
+        return "Saúde";
+      case TaskType.food:
+        return "Alimentação";
+      case TaskType.activity:
+        return "Atividade";
     }
   }
 }

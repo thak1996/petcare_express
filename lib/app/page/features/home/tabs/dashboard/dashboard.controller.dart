@@ -76,6 +76,8 @@ class DashBoardTabController extends Cubit<DashBoardTabState> {
               subtitle: t.subtitle,
               type: t.type,
               isDone: !t.isDone,
+              petId: t.petId,
+              petName: t.petName,
             )
           : t;
     }).toList();
