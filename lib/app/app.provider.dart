@@ -11,10 +11,11 @@ import 'core/repository/schedule.repository.dart';
 import 'core/service/firebase/firebase_auth.service.dart';
 import 'core/service/storage/secure_storage.service.dart';
 import 'core/service/storage/token.storage.dart';
-import 'page/auth/forgot/forgot.controller.dart';
+import 'page/auth/forgot/forgot.bloc.dart';
 import 'page/auth/register/register.controller.dart';
-import 'page/auth/login/login.controller.dart';
-import 'page/features/home/tabs/calendar/calendar.controller.dart';
+import 'page/auth/login/login.bloc.dart';
+import 'page/features/home/tabs/calendar/calendar.bloc.dart';
+import 'page/features/home/tabs/calendar/calendar.event.dart';
 import 'page/features/home/tabs/calendar/use_case/calendar.use_case.dart';
 import 'page/features/home/tabs/dashboard/dashboard.controller.dart';
 import 'page/features/home/tabs/dashboard/dashboard.event.dart';
@@ -77,14 +78,14 @@ class AppProvider {
   ];
 
   static final List<SingleChildWidget> _controllers = [
-    BlocProvider<LoginController>(
-      create: (context) => LoginController(context.read<IAuthRepository>()),
+    BlocProvider<LoginBloc>(
+      create: (context) => LoginBloc(context.read<IAuthRepository>()),
     ),
     BlocProvider<RegisterController>(
       create: (context) => RegisterController(context.read<IAuthRepository>()),
     ),
-    BlocProvider<ForgotController>(
-      create: (context) => ForgotController(context.read<IAuthRepository>()),
+    BlocProvider<ForgotBloc>(
+      create: (context) => ForgotBloc(context.read<IAuthRepository>()),
     ),
     BlocProvider<DashBoardBloc>(
       create: (context) => DashBoardBloc(
@@ -94,12 +95,12 @@ class AppProvider {
         context.read<IScheduleRepository>(),
       )..add(LoadDashboardData()),
     ),
-    BlocProvider<CalendarController>(
-      create: (context) => CalendarController(
+    BlocProvider<CalendarBloc>(
+      create: (context) => CalendarBloc(
         context.read<IAuthRepository>(),
         context.read<CalendarUseCase>(),
         context.read<IScheduleRepository>(),
-      )..loadData(),
+      )..add(LoadCalendarData()),
     ),
   ];
 }

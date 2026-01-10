@@ -4,8 +4,8 @@ import '../../../core/repository/auth.repository.dart';
 import 'login.event.dart';
 import 'login.state.dart';
 
-class LoginController extends Bloc<LoginEvent, LoginState> {
-  LoginController(this._authRepository) : super(LoginInitial()) {
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  LoginBloc(this._authRepository) : super(LoginInitial()) {
     on<LoginSubmitted>(_onLogin);
   }
 

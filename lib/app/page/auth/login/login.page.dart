@@ -17,7 +17,7 @@ import '../../../core/widgets/social_login_button.widget.dart';
 import '../../../core/widgets/text_button.widget.dart';
 import '../../../core/widgets/text_field.widget.dart';
 import '../../../core/widgets/alert_dialog.widget.dart';
-import 'login.controller.dart';
+import 'login.bloc.dart';
 import 'login.event.dart';
 import 'login.state.dart';
 
@@ -42,10 +42,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (_) => LoginController(context.read<IAuthRepository>()),
+    create: (_) => LoginBloc(context.read<IAuthRepository>()),
     child: Scaffold(
       backgroundColor: AppColors.background,
-      body: BlocConsumer<LoginController, LoginState>(
+      body: BlocConsumer<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginError) {
             AlertDialogWidget.show(
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
           if (state is LoginSuccess) context.go('/home');
         },
         builder: (context, state) {
-          final controller = context.read<LoginController>();
+          final controller = context.read<LoginBloc>();
           return switch (state) {
             LoginInitial() => const Center(child: CircularProgressIndicator()),
             LoginLoading() ||
@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
   Stack _form(
     BuildContext context,
     LoginState state,
-    LoginController controller,
+    LoginBloc controller,
   ) => Stack(
     children: [
       AppEffects.buildBackgroundDecoration,

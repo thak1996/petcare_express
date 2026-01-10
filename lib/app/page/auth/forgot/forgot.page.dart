@@ -12,7 +12,7 @@ import '../../../core/widgets/primary_button.widget.dart';
 import '../../../core/widgets/text_button.widget.dart';
 import '../../../core/widgets/text_field.widget.dart';
 import '../../../core/utils/validators.dart';
-import 'forgot.controller.dart';
+import 'forgot.bloc.dart';
 import 'forgot.event.dart';
 import 'forgot.state.dart';
 
@@ -35,10 +35,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (_) => ForgotController(context.read<IAuthRepository>()),
+    create: (_) => ForgotBloc(context.read<IAuthRepository>()),
     child: Scaffold(
       backgroundColor: AppColors.background,
-      body: BlocConsumer<ForgotController, ForgotState>(
+      body: BlocConsumer<ForgotBloc, ForgotState>(
         listener: (context, state) {
           if (state is ForgotError) {
             AlertDialogWidget.show(
@@ -59,7 +59,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           }
         },
         builder: (context, state) {
-          final controller = context.read<ForgotController>();
+          final controller = context.read<ForgotBloc>();
           return switch (state) {
             ForgotInitial() ||
             ForgotLoading() ||
@@ -74,7 +74,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Stack _form(
     BuildContext context,
     ForgotState state,
-    ForgotController controller,
+    ForgotBloc controller,
   ) => Stack(
     children: [
       AppEffects.buildRecoveryBackground,

@@ -4,8 +4,8 @@ import '../../../core/repository/auth.repository.dart';
 import 'forgot.event.dart';
 import 'forgot.state.dart';
 
-class ForgotController extends Bloc<ForgotEvent, ForgotState> {
-  ForgotController(this._authRepository) : super(ForgotInitial()) {
+class ForgotBloc extends Bloc<ForgotEvent, ForgotState> {
+  ForgotBloc(this._authRepository) : super(ForgotInitial()) {
     on<ForgotSubmitted>(_sendRecovery);
   }
 
