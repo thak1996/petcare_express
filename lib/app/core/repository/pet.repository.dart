@@ -12,18 +12,21 @@ abstract class IPetRepository {
 class PetRepositoryImpl implements IPetRepository {
   final List<PetModel> mockPets = [
     PetModel(
+      id: "1",
       name: "Rex",
       imageUrl: "https://placedog.net/200",
       borderColor: Colors.teal,
       hasWarning: true,
     ),
     PetModel(
+      id: "2",
       name: "Luna",
       imageUrl: "https://placedog.net/201",
       borderColor: Colors.orange,
       hasWarning: true,
     ),
     PetModel(
+      id: "3",
       name: "Thor",
       imageUrl: "https://placedog.net/202",
       borderColor: Colors.purple,

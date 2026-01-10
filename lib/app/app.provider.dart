@@ -14,13 +14,18 @@ import 'core/service/storage/token.storage.dart';
 import 'page/auth/forgot/forgot.controller.dart';
 import 'page/auth/register/register.controller.dart';
 import 'page/auth/login/login.controller.dart';
+import 'page/features/home/tabs/calendar/calendar.controller.dart';
+import 'page/features/home/tabs/calendar/use_case/calendar.use_case.dart';
 import 'page/features/home/tabs/dashboard/dashboard.controller.dart';
+import 'page/features/home/tabs/dashboard/dashboard.event.dart';
+import 'page/features/home/tabs/dashboard/use_case/dashboard.use_case.dart';
 
 class AppProvider {
   static List<SingleChildWidget> get providers => [
     ..._services,
     ..._domainStorages,
     ..._repositories,
+    ..._useCases,
     ..._controllers,
   ];
 
@@ -54,6 +59,23 @@ class AppProvider {
     Provider<IScheduleRepository>(create: (_) => ScheduleRepositoryImpl()),
   ];
 
+  static final List<SingleChildWidget> _useCases = [
+    RepositoryProvider<CalendarUseCase>(
+      create: (context) => CalendarUseCase(
+        context.read<IPetRepository>(),
+        context.read<IScheduleRepository>(),
+        context.read<INotificationRepository>(),
+      ),
+    ),
+    RepositoryProvider<DashboardUseCase>(
+      create: (context) => DashboardUseCase(
+        context.read<IPetRepository>(),
+        context.read<IScheduleRepository>(),
+        context.read<INotificationRepository>(),
+      ),
+    ),
+  ];
+
   static final List<SingleChildWidget> _controllers = [
     BlocProvider<LoginController>(
       create: (context) => LoginController(context.read<IAuthRepository>()),
@@ -64,11 +86,18 @@ class AppProvider {
     BlocProvider<ForgotController>(
       create: (context) => ForgotController(context.read<IAuthRepository>()),
     ),
-    BlocProvider<DashBoardTabController>(
-      create: (context) => DashBoardTabController(
+    BlocProvider<DashBoardBloc>(
+      create: (context) => DashBoardBloc(
         context.read<IAuthRepository>(),
-        context.read<IPetRepository>(),
+        context.read<DashboardUseCase>(),
         context.read<INotificationRepository>(),
+        context.read<IScheduleRepository>(),
+      )..add(LoadDashboardData()),
+    ),
+    BlocProvider<CalendarController>(
+      create: (context) => CalendarController(
+        context.read<IAuthRepository>(),
+        context.read<CalendarUseCase>(),
         context.read<IScheduleRepository>(),
       )..loadData(),
     ),

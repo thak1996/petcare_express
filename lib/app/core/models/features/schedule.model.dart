@@ -57,4 +57,28 @@ class ScheduleModel {
         return "Atividade";
     }
   }
+
+  ScheduleModel copyWith({
+    String? id,
+    String? title,
+    String? time,
+    String? subtitle,
+    TaskType? type,
+    bool? isDone,
+    String? petId,
+    String? petName,
+    String? petImage,
+  }) {
+    return ScheduleModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      time: time ?? this.time,
+      subtitle: subtitle ?? this.subtitle,
+      type: type ?? this.type,
+      isDone: isDone ?? this.isDone,
+      petId: petId ?? this.petId,
+      petName: petName ?? this.petName,
+      petImage: petImage ?? this.petImage,
+    );
+  }
 }

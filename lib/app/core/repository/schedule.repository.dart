@@ -6,6 +6,11 @@ abstract class IScheduleRepository {
   AsyncResult<Unit> updateTaskStatus(String taskId);
   AsyncResult<Unit> addTaskForUser(String userId, ScheduleModel task);
   AsyncResult<Unit> removeTaskForUser(String userId, String taskId);
+  AsyncResult<List<ScheduleModel>> getTasksByDate(
+    String userId,
+    DateTime date, {
+    String? petId,
+  });
 }
 
 class ScheduleRepositoryImpl implements IScheduleRepository {
@@ -82,5 +87,15 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
   AsyncResult<Unit> removeTaskForUser(String userId, String taskId) async {
     _mockTasks.removeWhere((task) => task.id == taskId);
     return Success(unit);
+  }
+
+  @override
+  AsyncResult<List<ScheduleModel>> getTasksByDate(
+    String userId,
+    DateTime date, {
+    String? petId,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    return Success(_mockTasks);
   }
 }

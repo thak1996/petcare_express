@@ -19,12 +19,11 @@ class ScheduleCardWidget extends StatelessWidget {
         color: task.isDone ? Colors.grey.shade50 : Colors.white,
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
-          if (!task.isDone)
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
         ],
       ),
       child: Row(
@@ -149,7 +148,7 @@ class ScheduleCardWidget extends StatelessWidget {
         ),
         child: Icon(
           Icons.check,
-          color: task.isDone ? Colors.white : Colors.transparent,
+          color: task.isDone ? Colors.white : Colors.grey.shade300,
           size: 18.sp,
         ),
       ),
