@@ -1,6 +1,9 @@
-sealed class ForgotState {
+import 'package:equatable/equatable.dart';
+
+sealed class ForgotState extends Equatable {
   const ForgotState();
 
+  @override
   List<Object?> get props => [];
 }
 
