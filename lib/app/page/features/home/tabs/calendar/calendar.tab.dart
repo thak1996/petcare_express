@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/models/features/notification.model.dart';
 import '../../../../../core/repository/auth.repository.dart';
-import '../../../../../core/repository/pet.repository.dart';
 import '../../../../../core/repository/schedule.repository.dart';
 import '../../../../../core/theme/app.colors.dart';
 import '../../../../../core/theme/app.effects.dart';
 import '../../../../../core/widgets/alert_dialog.widget.dart';
+import '../../../../../core/widgets/error_state.widget.dart';
 import '../../../../../core/widgets/header_features.widget.dart';
-import 'calendar.controller.dart';
+import 'calendar.bloc.dart';
+import 'calendar.event.dart';
 import 'calendar.state.dart';
 import 'use_case/calendar.use_case.dart';
 import 'widgets/calendar_slider_horizontal.widget.dart';
@@ -22,17 +23,17 @@ class CalendarTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CalendarController(
+      create: (context) => CalendarBloc(
         context.read<IAuthRepository>(),
         context.read<CalendarUseCase>(),
         context.read<IScheduleRepository>(),
-      )..loadData(),
+      )..add(LoadCalendarData()),
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: Stack(
           children: [
             AppEffects.buildDashboardBackground,
-            BlocConsumer<CalendarController, CalendarState>(
+            BlocConsumer<CalendarBloc, CalendarState>(
               listener: (context, state) {
                 if (state is CalendarError) {
                   AlertDialogWidget.show(
@@ -43,101 +44,102 @@ class CalendarTab extends StatelessWidget {
                 }
               },
               builder: (context, state) {
-                if (state is CalendarLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is CalendarSuccess) {
-                  final filteredTasks = state.selectedPetId == null
-                      ? state.todayTasks
-                      : state.todayTasks
-                            .where((t) => t.petId == state.selectedPetId)
-                            .toList();
-
-                  final pendingCount = filteredTasks
-                      .where((t) => !t.isDone)
-                      .length;
-                  final List<NotificationModel> notifications =
-                      state.notifications;
-
-                  return SafeArea(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20.h),
-                        HeaderFeaturesWidget(
-                          style: HeaderStyle.feature,
-                          title: "Agenda de",
-                          subtitle: "Outubro 2023",
-                          notifications: notifications,
-                        ),
-
-                        SizedBox(height: 20.h),
-
-                        // 1. Seletor de Pets (Mini Slider)
-                        MiniPetSelectorWidget(
-                          pets: state.pets,
-                          selectedPetId: state.selectedPetId,
-                          onPetSelected: (id) => context
-                              .read<CalendarController>()
-                              .filterByPet(id),
-                        ),
-
-                        SizedBox(height: 16.h),
-
-                        // 2. Calendário Horizontal
-                        CalendarSliderWidget(
-                          selectedDate: state.selectedDate,
-                          onDateSelected: (date) => context
-                              .read<CalendarController>()
-                              .changeDate(date),
-                        ),
-
-                        SizedBox(height: 24.h),
-
-                        // 3. Título da Seção e Contador (Pequeno Badge)
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                final bloc = context.read<CalendarBloc>();
+                return switch (state) {
+                  CalendarInitial() || CalendarLoading() => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  CalendarSuccess(
+                    :final todayTasks,
+                    :final pets,
+                    :final selectedPetId,
+                    :final selectedDate,
+                    :final notifications,
+                  ) =>
+                    Builder(
+                      builder: (context) {
+                        final filteredTasks = selectedPetId == null
+                            ? todayTasks
+                            : todayTasks
+                                  .where((t) => t.petId == selectedPetId)
+                                  .toList();
+                        final pendingCount = filteredTasks
+                            .where((t) => !t.isDone)
+                            .length;
+                        return SafeArea(
+                          child: Column(
                             children: [
-                              Text(
-                                "Tarefas de Hoje",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.bold,
+                              SizedBox(height: 20.h),
+                              HeaderFeaturesWidget(
+                                style: HeaderStyle.feature,
+                                title: "Agenda de",
+                                subtitle: "Outubro 2023",
+                                notifications: notifications,
+                              ),
+                              SizedBox(height: 20.h),
+                              MiniPetSelectorWidget(
+                                pets: pets,
+                                selectedPetId: selectedPetId,
+                                onPetSelected: (id) =>
+                                    bloc.add(FilterByPet(id)),
+                              ),
+                              SizedBox(height: 16.h),
+                              CalendarSliderWidget(
+                                selectedDate: selectedDate,
+                                onDateSelected: (date) =>
+                                    bloc.add(ChangeSelectedDate(date)),
+                              ),
+                              SizedBox(height: 24.h),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Tarefas de Hoje",
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    if (pendingCount > 0)
+                                      _buildPendantBadge(
+                                        "$pendingCount Pendentes",
+                                      ),
+                                  ],
                                 ),
                               ),
-                              if (pendingCount > 0)
-                                _buildPendantBadge("$pendingCount Pendentes"),
+                              SizedBox(height: 16.h),
+                              Expanded(
+                                child: filteredTasks.isEmpty
+                                    ? _buildEmptyState()
+                                    : ListView.builder(
+                                        padding: EdgeInsets.only(bottom: 20.h),
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount: filteredTasks.length,
+                                        itemBuilder: (context, index) {
+                                          final task = filteredTasks[index];
+                                          return ScheduleCardWidget(
+                                            task: task,
+                                            onTap: () => bloc.add(
+                                              ToggleCalendarTask(task),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                              ),
                             ],
                           ),
-                        ),
-
-                        SizedBox(height: 16.h),
-
-                        // 4. Lista de Tarefas (Expanded para ocupar o resto e evitar overflow)
-                        Expanded(
-                          child: filteredTasks.isEmpty
-                              ? _buildEmptyState()
-                              : ListView.builder(
-                                  padding: EdgeInsets.only(bottom: 20.h),
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: filteredTasks.length,
-                                  itemBuilder: (context, index) {
-                                    final task = filteredTasks[index];
-                                    return ScheduleCardWidget(
-                                      task: task,
-                                      onTap: () => context
-                                          .read<CalendarController>()
-                                          .toggleTask(task),
-                                    );
-                                  },
-                                ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                }
-                return const SizedBox.shrink();
+
+                  CalendarError(:final message) => ErrorStateWidget(
+                    message: message,
+                    onPressed: () => bloc.add(LoadCalendarData()),
+                  ),
+                };
               },
             ),
           ],
@@ -146,7 +148,6 @@ class CalendarTab extends StatelessWidget {
     );
   }
 
-  // Widget auxiliar para o badge de pendências
   Widget _buildPendantBadge(String label) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
@@ -165,7 +166,6 @@ class CalendarTab extends StatelessWidget {
     );
   }
 
-  // Widget para quando não houver tarefas no filtro
   Widget _buildEmptyState() {
     return Center(
       child: Column(

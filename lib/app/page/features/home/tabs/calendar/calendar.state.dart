@@ -1,17 +1,20 @@
+import 'package:equatable/equatable.dart';
 import '../../../../../core/models/features/notification.model.dart';
 import '../../../../../core/models/features/pet.model.dart';
 import '../../../../../core/models/features/schedule.model.dart';
 
-abstract class CalendarState {
+sealed class CalendarState extends Equatable {
   const CalendarState();
+
+  @override
   List<Object?> get props => [];
 }
 
-class CalendarInitial extends CalendarState {}
+final class CalendarInitial extends CalendarState {}
 
-class CalendarLoading extends CalendarState {}
+final class CalendarLoading extends CalendarState {}
 
-class CalendarSuccess extends CalendarState {
+final class CalendarSuccess extends CalendarState {
   final String? selectedPetId;
   final DateTime selectedDate;
   final List<PetModel> pets;
@@ -55,7 +58,7 @@ class CalendarSuccess extends CalendarState {
   ];
 }
 
-class CalendarError extends CalendarState {
+final class CalendarError extends CalendarState {
   final String message;
   const CalendarError(this.message);
 

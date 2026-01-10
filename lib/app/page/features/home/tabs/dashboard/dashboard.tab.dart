@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:petcare_express/app/core/repository/auth.repository.dart';
 import 'package:petcare_express/app/core/widgets/logout_button.widget.dart';
@@ -81,9 +82,7 @@ class DashBoardTab extends StatelessWidget {
                             onPetPressed: (pet) =>
                                 debugPrint('Pet: ${pet.name}'),
                           ),
-                          SubTitleWidget(
-                            onTap: () => debugPrint('Ver tudo agenda'),
-                          ),
+                          SubTitleWidget(onTap: () => context.go('/calendar')),
                           SizedBox(height: 8.h),
                           ...todayTasks.map(
                             (task) => ScheduleCardWidget(
