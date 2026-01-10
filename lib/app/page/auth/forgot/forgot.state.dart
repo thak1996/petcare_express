@@ -1,16 +1,16 @@
-abstract class ForgotState {
+sealed class ForgotState {
   const ForgotState();
 
   List<Object?> get props => [];
 }
 
-class ForgotInitial extends ForgotState {}
+final class ForgotInitial extends ForgotState {}
 
-class ForgotLoading extends ForgotState {}
+final class ForgotLoading extends ForgotState {}
 
-class ForgotSuccess extends ForgotState {}
+final class ForgotSuccess extends ForgotState {}
 
-class ForgotError extends ForgotState {
+final class ForgotError extends ForgotState {
   const ForgotError(this.message);
 
   final String message;
