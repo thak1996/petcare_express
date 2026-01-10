@@ -1,16 +1,15 @@
-abstract class RegisterState {
+sealed class RegisterState {
   const RegisterState();
 
   List<Object?> get props => [];
 }
 
-class RegisterInitial extends RegisterState {}
+final class RegisterInitial extends RegisterState {}
 
-class RegisterLoading extends RegisterState {}
+final class RegisterLoading extends RegisterState {}
 
-class RegisterSuccess extends RegisterState {}
-
-class RegisterError extends RegisterState {
+final class RegisterSuccess extends RegisterState {}
+final class RegisterError extends RegisterState {
   const RegisterError(this.message);
 
   final String message;
