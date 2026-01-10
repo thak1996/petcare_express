@@ -1,16 +1,16 @@
-abstract class LoginState {
+sealed class LoginState {
   const LoginState();
 
   List<Object?> get props => [];
 }
 
-class LoginInitial extends LoginState {}
+final class LoginInitial extends LoginState {}
 
-class LoginLoading extends LoginState {}
+final class LoginLoading extends LoginState {}
 
-class LoginSuccess extends LoginState {}
+final class LoginSuccess extends LoginState {}
 
-class LoginError extends LoginState {
+final class LoginError extends LoginState {
   const LoginError(this.message);
 
   final String message;
