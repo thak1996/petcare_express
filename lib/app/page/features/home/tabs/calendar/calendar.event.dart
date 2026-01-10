@@ -21,3 +21,9 @@ class ToggleCalendarTask extends CalendarEvent {
 
   final ScheduleModel task;
 }
+
+class TaskUpdatedExternal extends CalendarEvent {
+  TaskUpdatedExternal(this.task);
+
+  final ScheduleModel task;
+}

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:result_dart/result_dart.dart';
 import '../models/features/schedule.model.dart';
 
@@ -11,6 +12,7 @@ abstract class IScheduleRepository {
     DateTime date, {
     String? petId,
   });
+  Stream<ScheduleModel> get onTaskStatusChanged;
 }
 
 class ScheduleRepositoryImpl implements IScheduleRepository {
@@ -46,46 +48,12 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
       petName: 'Luna',
     ),
   ];
-  @override
-  AsyncResult<List<ScheduleModel>> getTodayTasks(String userId) async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    return Success(_mockTasks);
-  }
 
-  @override
-  AsyncResult<Unit> updateTaskStatus(String taskId) async {
-    try {
-      await Future.delayed(const Duration(milliseconds: 300));
-      final index = _mockTasks.indexWhere((task) => task.id == taskId);
-      if (index != -1) {
-        final task = _mockTasks[index];
-        _mockTasks[index] = ScheduleModel(
-          id: task.id,
-          title: task.title,
-          time: task.time,
-          subtitle: task.subtitle,
-          type: task.type,
-          isDone: !task.isDone,
-          petId: task.petId,
-          petName: task.petName,
-        );
-        return Success(unit);
-      }
-      return Failure(Exception("Tarefa não encontrada"));
-    } catch (e) {
-      return Failure(Exception(e.toString()));
-    }
-  }
+  final _statusChangeController = StreamController<ScheduleModel>.broadcast();
 
   @override
   AsyncResult<Unit> addTaskForUser(String userId, ScheduleModel task) async {
     _mockTasks.add(task);
-    return Success(unit);
-  }
-
-  @override
-  AsyncResult<Unit> removeTaskForUser(String userId, String taskId) async {
-    _mockTasks.removeWhere((task) => task.id == taskId);
     return Success(unit);
   }
 
@@ -97,5 +65,39 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
   }) async {
     await Future.delayed(const Duration(milliseconds: 800));
     return Success(_mockTasks);
+  }
+
+  @override
+  AsyncResult<List<ScheduleModel>> getTodayTasks(String userId) async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    return Success(_mockTasks);
+  }
+
+  @override
+  Stream<ScheduleModel> get onTaskStatusChanged =>
+      _statusChangeController.stream;
+
+  @override
+  AsyncResult<Unit> removeTaskForUser(String userId, String taskId) async {
+    _mockTasks.removeWhere((task) => task.id == taskId);
+    return Success(unit);
+  }
+
+  @override
+  AsyncResult<Unit> updateTaskStatus(String taskId) async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 300));
+      final index = _mockTasks.indexWhere((task) => task.id == taskId);
+      if (index != -1) {
+        final oldTask = _mockTasks[index];
+        final newTask = oldTask.copyWith(isDone: !oldTask.isDone);
+        _mockTasks[index] = newTask;
+        _statusChangeController.add(newTask);
+        return Success(unit);
+      }
+      return Failure(Exception("Tarefa não encontrada"));
+    } catch (e) {
+      return Failure(Exception(e.toString()));
+    }
   }
 }

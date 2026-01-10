@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petcare_express/app/page/features/home/tabs/calendar/use_case/calendar.use_case.dart';
 import 'package:result_dart/result_dart.dart';
@@ -16,11 +17,17 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     on<ChangeSelectedDate>(_onChangeDate);
     on<FilterByPet>(_onFilterByPet);
     on<ToggleCalendarTask>(_onToggleTask);
+    on<TaskUpdatedExternal>(_onTaskUpdatedExternal);
+    _subscription = _scheduleRepository.onTaskStatusChanged.listen(
+      (taskId) => add(TaskUpdatedExternal(taskId)),
+    );
   }
 
+  late final StreamSubscription<ScheduleModel> _subscription;
+
   final IAuthRepository _authRepository;
-  final CalendarUseCase _useCase;
   final IScheduleRepository _scheduleRepository;
+  final CalendarUseCase _useCase;
 
   Future<void> _onLoadData(
     LoadCalendarData event,
@@ -80,5 +87,24 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     if (result.isError()) {
       add(LoadCalendarData());
     }
+  }
+
+  void _onTaskUpdatedExternal(
+    TaskUpdatedExternal event,
+    Emitter<CalendarState> emit,
+  ) {
+    if (state is! CalendarSuccess) return;
+    final currentState = state as CalendarSuccess;
+    final updatedTasks = currentState.todayTasks.map((task) {
+      if (task.id == event.task.id) return event.task;
+      return task;
+    }).toList();
+    emit(currentState.copyWith(todayTasks: updatedTasks));
+  }
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
   }
 }

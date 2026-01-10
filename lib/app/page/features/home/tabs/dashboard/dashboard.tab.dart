@@ -20,7 +20,7 @@ import '../../../../../core/widgets/header_features.widget.dart';
 import 'dashboard.event.dart';
 import 'use_case/dashboard.use_case.dart';
 import 'widgets/pet_slider.widget.dart';
-import 'dashboard.controller.dart';
+import 'dashboard.bloc.dart';
 import 'dashboard.state.dart';
 import 'widgets/schedule_card.widget.dart';
 import 'widgets/sub_title.widget.dart';

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:result_dart/result_dart.dart';
 import '../../../../../core/models/auth/user.model.dart';
@@ -20,13 +22,17 @@ class DashBoardBloc extends Bloc<DashboardEvent, DashBoardTabState> {
     on<LoadDashboardData>(_onLoadData);
     on<ToggleTask>(_onToggleTask);
     on<DismissNotification>(_onDismissNotification);
+    on<TaskUpdatedExternal>(_onTaskUpdatedExternal);
+    _subscription = _scheduleRepository.onTaskStatusChanged.listen(
+      (task) => add(TaskUpdatedExternal(task)),
+    );
   }
 
   final IAuthRepository _authRepository;
   final DashboardUseCase _dashboardUseCase;
   final INotificationRepository _notificationRepo;
   final IScheduleRepository _scheduleRepository;
-
+  late final StreamSubscription<ScheduleModel> _subscription;
   Future<void> _onLoadData(
     LoadDashboardData event,
     Emitter<DashBoardTabState> emit,
@@ -61,13 +67,10 @@ class DashBoardBloc extends Bloc<DashboardEvent, DashBoardTabState> {
   ) async {
     if (state is! DashBoardTabSuccess) return;
     final currentState = state as DashBoardTabSuccess;
-
     final updatedTasks = currentState.todayTasks.map((t) {
       return t.id == event.task.id ? t.copyWith(isDone: !t.isDone) : t;
     }).toList();
-
     emit(currentState.copyWith(todayTasks: updatedTasks));
-
     final result = await _scheduleRepository.updateTaskStatus(event.task.id);
     if (result.isError()) {
       add(LoadDashboardData());
@@ -93,5 +96,24 @@ class DashBoardBloc extends Bloc<DashboardEvent, DashBoardTabState> {
     if (result.isError()) {
       add(LoadDashboardData());
     }
+  }
+
+  void _onTaskUpdatedExternal(
+    TaskUpdatedExternal event,
+    Emitter<DashBoardTabState> emit,
+  ) {
+    if (state is! DashBoardTabSuccess) return;
+    final currentState = state as DashBoardTabSuccess;
+    final updatedTasks = currentState.todayTasks.map((task) {
+      if (task.id == event.task.id) return event.task;
+      return task;
+    }).toList();
+    emit(currentState.copyWith(todayTasks: updatedTasks));
+  }
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
   }
 }

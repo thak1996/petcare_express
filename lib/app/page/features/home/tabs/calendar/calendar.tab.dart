@@ -70,6 +70,7 @@ class CalendarTab extends StatelessWidget {
                           child: Column(
                             children: [
                               SizedBox(height: 20.h),
+                              // TODO: Ajustar o Subtitle para refletir com o nome do mês dinâmicamente
                               HeaderFeaturesWidget(
                                 style: HeaderStyle.feature,
                                 title: "Agenda de",
@@ -77,6 +78,7 @@ class CalendarTab extends StatelessWidget {
                                 notifications: notifications,
                               ),
                               SizedBox(height: 20.h),
+                              // TODO: Ajustar o Componente para ser possível clicar em "todos"
                               MiniPetSelectorWidget(
                                 pets: pets,
                                 selectedPetId: selectedPetId,
@@ -84,6 +86,7 @@ class CalendarTab extends StatelessWidget {
                                     bloc.add(FilterByPet(id)),
                               ),
                               SizedBox(height: 16.h),
+                              // TODO: Reduzir altura do Componente de Data
                               CalendarSliderWidget(
                                 selectedDate: selectedDate,
                                 onDateSelected: (date) =>

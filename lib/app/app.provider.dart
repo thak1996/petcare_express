@@ -17,7 +17,7 @@ import 'page/auth/login/login.bloc.dart';
 import 'page/features/home/tabs/calendar/calendar.bloc.dart';
 import 'page/features/home/tabs/calendar/calendar.event.dart';
 import 'page/features/home/tabs/calendar/use_case/calendar.use_case.dart';
-import 'page/features/home/tabs/dashboard/dashboard.controller.dart';
+import 'page/features/home/tabs/dashboard/dashboard.bloc.dart';
 import 'page/features/home/tabs/dashboard/dashboard.event.dart';
 import 'page/features/home/tabs/dashboard/use_case/dashboard.use_case.dart';
 

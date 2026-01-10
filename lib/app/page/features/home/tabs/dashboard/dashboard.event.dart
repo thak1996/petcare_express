@@ -14,3 +14,9 @@ class DismissNotification extends DashboardEvent {
   final NotificationModel notification;
   DismissNotification(this.notification);
 }
+
+class TaskUpdatedExternal extends DashboardEvent {
+  TaskUpdatedExternal(this.task);
+
+  final ScheduleModel task;
+}
