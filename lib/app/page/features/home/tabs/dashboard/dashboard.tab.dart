@@ -14,7 +14,10 @@ import '../../../../../core/theme/app.colors.dart';
 import '../../../../../core/theme/app.effects.dart';
 import '../../../../../core/utils/string.utils.dart';
 import '../../../../../core/widgets/alert_dialog.widget.dart';
-import 'widgets/dashboard_header.widget.dart';
+import '../../../../../core/widgets/error_state.widget.dart';
+import '../../../../../core/widgets/header_features.widget.dart';
+import 'dashboard.event.dart';
+import 'use_case/dashboard.use_case.dart';
 import 'widgets/pet_slider.widget.dart';
 import 'dashboard.controller.dart';
 import 'dashboard.state.dart';
@@ -27,18 +30,18 @@ class DashBoardTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => DashBoardTabController(
+      create: (context) => DashBoardBloc(
         context.read<IAuthRepository>(),
-        context.read<IPetRepository>(),
+        context.read<DashboardUseCase>(),
         context.read<INotificationRepository>(),
         context.read<IScheduleRepository>(),
-      )..loadData(),
+      )..add(LoadDashboardData()),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8F9FA),
         body: Stack(
           children: [
             AppEffects.buildDashboardBackground,
-            BlocConsumer<DashBoardTabController, DashBoardTabState>(
+            BlocConsumer<DashBoardBloc, DashBoardTabState>(
               listener: (context, state) {
                 if (state is DashBoardTabError) {
                   AlertDialogWidget.show(
@@ -49,56 +52,53 @@ class DashBoardTab extends StatelessWidget {
                 }
               },
               builder: (context, state) {
-                if (state is DashBoardTabLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final controller = context.read<DashBoardTabController>();
-                final String userName = (state is DashBoardTabSuccess)
-                    ? state.userName
-                    : 'Usuário';
-                final List<PetModel> pets = (state is DashBoardTabSuccess)
-                    ? state.pets
-                    : [];
-                final List<NotificationModel> notifications =
-                    (state is DashBoardTabSuccess) ? state.notifications : [];
-                final List<ScheduleModel> tasks = (state is DashBoardTabSuccess)
-                    ? state.todayTasks
-                    : [];
-                final formattedName = StringHelper.formatUserName(userName);
-                return SafeArea(
-                  child: RefreshIndicator(
-                    onRefresh: () =>
-                        context.read<DashBoardTabController>().loadData(),
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      children: [
-                        SizedBox(height: 20.h),
-                        DashboardHeaderWidget(
-                          userName: formattedName,
-                          notifications: notifications,
-                          onDismissNotification: (notification) =>
-                              controller.dismissNotification(notification),
-                          margin: EdgeInsets.symmetric(horizontal: 24.w),
-                        ),
-                        SizedBox(height: 14.h),
-                        PetSliderWidget(
-                          pets: pets,
-                          onPetPressed: (pet) => debugPrint('Pet: ${pet.name}'),
-                        ),
-                        SubTitleWidget(
-                          onTap: () => debugPrint('Ver tudo agenda'),
-                        ),
-                        SizedBox(height: 8.h),
-                        ...tasks.map(
-                          (task) => ScheduleCardWidget(
-                            task: task,
-                            onTap: () => controller.toggleTask(task),
+                final bloc = context.read<DashBoardBloc>();
+                return switch (state) {
+                  DashBoardTabLoading() || DashBoardTabInitial() =>
+                    const Center(child: CircularProgressIndicator()),
+                  DashBoardTabSuccess(
+                    :final userName,
+                    :final pets,
+                    :final notifications,
+                    :final todayTasks,
+                  ) =>
+                    SafeArea(
+                      child: ListView(
+                        physics: const BouncingScrollPhysics(),
+                        children: [
+                          SizedBox(height: 20.h),
+                          HeaderFeaturesWidget(
+                            style: HeaderStyle.home,
+                            userName: StringHelper.formatUserName(userName),
+                            notifications: notifications,
+                            onDismissNotification: (n) =>
+                                bloc.add(DismissNotification(n)),
+                            margin: EdgeInsets.symmetric(horizontal: 24.w),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 14.h),
+                          PetSliderWidget(
+                            pets: pets,
+                            onPetPressed: (pet) =>
+                                debugPrint('Pet: ${pet.name}'),
+                          ),
+                          SubTitleWidget(
+                            onTap: () => debugPrint('Ver tudo agenda'),
+                          ),
+                          SizedBox(height: 8.h),
+                          ...todayTasks.map(
+                            (task) => ScheduleCardWidget(
+                              task: task,
+                              onTap: () => bloc.add(ToggleTask(task)),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  DashBoardTabError(:final message) => ErrorStateWidget(
+                    message: message,
+                    onPressed: () => bloc.add(LoadDashboardData()),
                   ),
-                );
+                };
               },
             ),
           ],

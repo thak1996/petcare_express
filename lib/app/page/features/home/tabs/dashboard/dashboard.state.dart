@@ -1,18 +1,20 @@
 import '../../../../../core/models/features/notification.model.dart';
 import '../../../../../core/models/features/pet.model.dart';
 import '../../../../../core/models/features/schedule.model.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class DashBoardTabState {
+sealed class DashBoardTabState extends Equatable {
   const DashBoardTabState();
 
+  @override
   List<Object?> get props => [];
 }
 
-class DashBoardTabInitial extends DashBoardTabState {}
+final class DashBoardTabInitial extends DashBoardTabState {}
 
-class DashBoardTabLoading extends DashBoardTabState {}
+final class DashBoardTabLoading extends DashBoardTabState {}
 
-class DashBoardTabSuccess extends DashBoardTabState {
+final class DashBoardTabSuccess extends DashBoardTabState {
   const DashBoardTabSuccess({
     required this.userName,
     required this.pets,
@@ -43,7 +45,7 @@ class DashBoardTabSuccess extends DashBoardTabState {
   List<Object?> get props => [userName, pets, notifications, todayTasks];
 }
 
-class DashBoardTabError extends DashBoardTabState {
+final class DashBoardTabError extends DashBoardTabState {
   const DashBoardTabError(this.message);
 
   final String message;

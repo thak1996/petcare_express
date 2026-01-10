@@ -1,104 +1,97 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:result_dart/result_dart.dart';
 import '../../../../../core/models/auth/user.model.dart';
-import '../../../../../core/models/features/notification.model.dart';
-import '../../../../../core/models/features/pet.model.dart';
 import '../../../../../core/models/features/schedule.model.dart';
+import '../../../../../core/models/features/notification.model.dart';
 import '../../../../../core/repository/auth.repository.dart';
 import '../../../../../core/repository/notification.repository.dart';
-import '../../../../../core/repository/pet.repository.dart';
 import '../../../../../core/repository/schedule.repository.dart';
+import 'dashboard.event.dart';
 import 'dashboard.state.dart';
+import 'use_case/dashboard.use_case.dart';
 
-class DashBoardTabController extends Cubit<DashBoardTabState> {
-  DashBoardTabController(
+class DashBoardBloc extends Bloc<DashboardEvent, DashBoardTabState> {
+  DashBoardBloc(
     this._authRepository,
-    this._petRepository,
+    this._dashboardUseCase,
     this._notificationRepo,
     this._scheduleRepository,
-  ) : super(DashBoardTabInitial());
+  ) : super(DashBoardTabInitial()) {
+    on<LoadDashboardData>(_onLoadData);
+    on<ToggleTask>(_onToggleTask);
+    on<DismissNotification>(_onDismissNotification);
+  }
 
   final IAuthRepository _authRepository;
-  final IPetRepository _petRepository;
+  final DashboardUseCase _dashboardUseCase;
   final INotificationRepository _notificationRepo;
   final IScheduleRepository _scheduleRepository;
 
-  Future<void> loadData() async {
-    if (isClosed) return;
+  Future<void> _onLoadData(
+    LoadDashboardData event,
+    Emitter<DashBoardTabState> emit,
+  ) async {
     if (state is! DashBoardTabSuccess) emit(DashBoardTabLoading());
+
     final userResult = await _authRepository.getCurrentUser();
     if (userResult.isError()) {
       emit(DashBoardTabError(userResult.exceptionOrNull().toString()));
       return;
     }
+
     final user = userResult.getOrDefault(UserModel.empty());
-    final userId = user.id;
-    final [notificationResult, petsResult, scheduleResult] = await Future.wait([
-      _notificationRepo.getNotifications(userId.toString()),
-      _petRepository.getPetsForUser(userId.toString()),
-      _scheduleRepository.getTodayTasks(userId.toString()),
-    ]);
-    if (isClosed) return;
-    if (notificationResult.isError() ||
-        petsResult.isError() ||
-        scheduleResult.isError()) {
-      final errorMsg =
-          notificationResult.exceptionOrNull()?.toString() ??
-          petsResult.exceptionOrNull()?.toString() ??
-          scheduleResult.exceptionOrNull()?.toString() ??
-          "Erro ao carregar dados";
-      emit(DashBoardTabError(errorMsg));
-      return;
-    }
-    emit(
-      DashBoardTabSuccess(
-        userName: user.name ?? 'Usuário',
-        pets: petsResult.getOrDefault(<PetModel>[]).cast<PetModel>(),
-        notifications: notificationResult
-            .getOrDefault(<NotificationModel>[])
-            .cast<NotificationModel>(),
-        todayTasks: scheduleResult
-            .getOrDefault(<ScheduleModel>[])
-            .cast<ScheduleModel>(),
+    final result = await _dashboardUseCase.execute(user.id.toString());
+
+    result.fold(
+      (data) => emit(
+        DashBoardTabSuccess(
+          userName: user.name ?? 'Usuário',
+          pets: data.pets,
+          notifications: data.notifications,
+          todayTasks: data.todayTasks,
+        ),
       ),
+      (error) => emit(DashBoardTabError(error.toString())),
     );
   }
 
-  Future<void> toggleTask(ScheduleModel task) async {
-    if (isClosed || state is! DashBoardTabSuccess) return;
+  Future<void> _onToggleTask(
+    ToggleTask event,
+    Emitter<DashBoardTabState> emit,
+  ) async {
+    if (state is! DashBoardTabSuccess) return;
     final currentState = state as DashBoardTabSuccess;
+
     final updatedTasks = currentState.todayTasks.map((t) {
-      return t.id == task.id
-          ? ScheduleModel(
-              id: t.id,
-              title: t.title,
-              time: t.time,
-              subtitle: t.subtitle,
-              type: t.type,
-              isDone: !t.isDone,
-              petId: t.petId,
-              petName: t.petName,
-            )
-          : t;
+      return t.id == event.task.id ? t.copyWith(isDone: !t.isDone) : t;
     }).toList();
+
     emit(currentState.copyWith(todayTasks: updatedTasks));
-    final result = await _scheduleRepository.updateTaskStatus(task.id);
+
+    final result = await _scheduleRepository.updateTaskStatus(event.task.id);
     if (result.isError()) {
-      emit(DashBoardTabError("Não foi possível atualizar a tarefa"));
-      loadData();
+      add(LoadDashboardData());
     }
   }
 
-  Future<void> dismissNotification(NotificationModel notification) async {
-    if (isClosed || state is! DashBoardTabSuccess) return;
+  Future<void> _onDismissNotification(
+    DismissNotification event,
+    Emitter<DashBoardTabState> emit,
+  ) async {
+    if (state is! DashBoardTabSuccess) return;
     final currentState = state as DashBoardTabSuccess;
+
     final updatedNotifications = currentState.notifications
-        .where((n) => n.id != notification.id)
+        .where((n) => n.id != event.notification.id)
         .toList();
+
     emit(currentState.copyWith(notifications: updatedNotifications));
-    final result = await _notificationRepo.dismissNotification(notification.id);
+
+    final result = await _notificationRepo.dismissNotification(
+      event.notification.id,
+    );
     if (result.isError()) {
-      loadData();
+      add(LoadDashboardData());
     }
   }
 }
