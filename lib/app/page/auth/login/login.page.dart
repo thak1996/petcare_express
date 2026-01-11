@@ -54,13 +54,16 @@ class _LoginPageState extends State<LoginPage> {
               message: state.message,
             );
           }
+          if (state is LoginLoading) {
+            CircularProgressIndicator();
+          }
           if (state is LoginSuccess) context.go('/home');
         },
         builder: (context, state) {
           final controller = context.read<LoginBloc>();
           return switch (state) {
-            LoginInitial() => const Center(child: CircularProgressIndicator()),
-            LoginLoading() ||
+            LoginLoading() => SizedBox(),
+            LoginInitial() ||
             LoginSuccess() ||
             LoginError() => _form(context, state, controller),
           };

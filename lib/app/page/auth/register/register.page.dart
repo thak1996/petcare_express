@@ -57,15 +57,16 @@ class _RegisterPageState extends State<RegisterPage> {
               message: state.message,
             );
           }
+          if (state is RegisterLoading) {
+            CircularProgressIndicator();
+          }
           if (state is RegisterSuccess) context.go('/home');
         },
         builder: (context, state) {
           final controller = context.read<RegisterController>();
           return switch (state) {
-            RegisterInitial() => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            RegisterLoading() ||
+            RegisterLoading() => SizedBox(),
+            RegisterInitial() ||
             RegisterSuccess() ||
             RegisterError() => _form(context, controller, state),
           };
