@@ -1,12 +1,19 @@
+import 'dart:async';
+
 import 'package:result_dart/result_dart.dart';
 import '../models/features/notification.model.dart';
 
 abstract class INotificationRepository {
   AsyncResult<List<NotificationModel>> getNotifications(String userId);
+
   AsyncResult<Unit> dismissNotification(String notificationId);
+
+  Stream<String> get onNotificationDismissed;
 }
 
 class NotificationRepositoryImpl implements INotificationRepository {
+  final _dismissController = StreamController<String>.broadcast();
+  
   final List<NotificationModel> _mockNotifications = [
     NotificationModel(
       id: "1",
@@ -31,6 +38,7 @@ class NotificationRepositoryImpl implements INotificationRepository {
   @override
   AsyncResult<Unit> dismissNotification(String notificationId) async {
     _mockNotifications.removeWhere((n) => n.id == notificationId);
+    _dismissController.add(notificationId);
     return Success(unit);
   }
 
@@ -38,4 +46,7 @@ class NotificationRepositoryImpl implements INotificationRepository {
   AsyncResult<List<NotificationModel>> getNotifications(String userId) async {
     return Success(_mockNotifications);
   }
+
+  @override
+  Stream<String> get onNotificationDismissed => _dismissController.stream;
 }

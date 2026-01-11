@@ -7,27 +7,38 @@ import '../../../../../core/models/features/schedule.model.dart';
 import '../../../../../core/repository/auth.repository.dart';
 import '../../../../../core/repository/pet.repository.dart';
 import '../../../../../core/repository/schedule.repository.dart';
+import '../../../../../core/repository/notification.repository.dart';
 import 'calendar.event.dart';
 import 'calendar.state.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
-  CalendarBloc(this._authRepository, this._useCase, this._scheduleRepository)
-    : super(CalendarInitial()) {
+  CalendarBloc(
+    this._authRepository,
+    this._useCase,
+    this._scheduleRepository,
+    this._notificationRepo,
+  ) : super(CalendarInitial()) {
     on<LoadCalendarData>(_onLoadData);
     on<ChangeSelectedDate>(_onChangeDate);
     on<FilterByPet>(_onFilterByPet);
     on<ToggleCalendarTask>(_onToggleTask);
     on<TaskUpdatedExternal>(_onTaskUpdatedExternal);
+    on<NotificationDismissedExternal>(_onNotificationDismissedExternal);
     _subscription = _scheduleRepository.onTaskStatusChanged.listen(
       (taskId) => add(TaskUpdatedExternal(taskId)),
+    );
+    _notifSubscription = _notificationRepo.onNotificationDismissed.listen(
+      (id) => add(NotificationDismissedExternal(id)),
     );
   }
 
   late final StreamSubscription<ScheduleModel> _subscription;
+  late final StreamSubscription<String> _notifSubscription;
 
   final IAuthRepository _authRepository;
   final IScheduleRepository _scheduleRepository;
   final CalendarUseCase _useCase;
+  final INotificationRepository _notificationRepo;
 
   Future<void> _onLoadData(
     LoadCalendarData event,
@@ -53,6 +64,19 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       ),
       (error) => emit(CalendarError(error.toString())),
     );
+  }
+
+  void _onNotificationDismissedExternal(
+    NotificationDismissedExternal event,
+    Emitter<CalendarState> emit,
+  ) {
+    if (state is! CalendarSuccess) return;
+    final currentState = state as CalendarSuccess;
+    final updatedList = currentState.notifications
+        .where((n) => n.id != event.notificationId)
+        .toList();
+
+    emit(currentState.copyWith(notifications: updatedList));
   }
 
   void _onChangeDate(ChangeSelectedDate event, Emitter<CalendarState> emit) {
@@ -105,6 +129,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   @override
   Future<void> close() {
     _subscription.cancel();
+    _notifSubscription.cancel();
     return super.close();
   }
 }

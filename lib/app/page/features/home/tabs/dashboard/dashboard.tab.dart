@@ -34,8 +34,8 @@ class DashBoardTab extends StatelessWidget {
       create: (context) => DashBoardBloc(
         context.read<IAuthRepository>(),
         context.read<DashboardUseCase>(),
-        context.read<INotificationRepository>(),
         context.read<IScheduleRepository>(),
+        context.read<INotificationRepository>(),
       )..add(LoadDashboardData()),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8F9FA),
@@ -67,7 +67,6 @@ class DashBoardTab extends StatelessWidget {
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
                         children: [
-                          SizedBox(height: 20.h),
                           HeaderFeaturesWidget(
                             style: HeaderStyle.home,
                             userName: StringHelper.formatUserName(userName),
@@ -76,14 +75,14 @@ class DashBoardTab extends StatelessWidget {
                                 bloc.add(DismissNotification(n)),
                             margin: EdgeInsets.symmetric(horizontal: 24.w),
                           ),
-                          SizedBox(height: 14.h),
+                          SizedBox(height: 12.h),
                           PetSliderWidget(
                             pets: pets,
                             onPetPressed: (pet) =>
                                 debugPrint('Pet: ${pet.name}'),
                           ),
                           SubTitleWidget(onTap: () => context.go('/calendar')),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 4.h),
                           ...todayTasks.map(
                             (task) => ScheduleCardWidget(
                               task: task,

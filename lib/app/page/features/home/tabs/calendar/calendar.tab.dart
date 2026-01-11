@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/models/features/notification.model.dart';
 import '../../../../../core/repository/auth.repository.dart';
+import '../../../../../core/repository/notification.repository.dart';
 import '../../../../../core/repository/schedule.repository.dart';
 import '../../../../../core/theme/app.colors.dart';
 import '../../../../../core/theme/app.effects.dart';
@@ -27,6 +28,7 @@ class CalendarTab extends StatelessWidget {
         context.read<IAuthRepository>(),
         context.read<CalendarUseCase>(),
         context.read<IScheduleRepository>(),
+        context.read<INotificationRepository>(),
       )..add(LoadCalendarData()),
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -137,7 +139,6 @@ class CalendarTab extends StatelessWidget {
                         );
                       },
                     ),
-
                   CalendarError(:final message) => ErrorStateWidget(
                     message: message,
                     onPressed: () => bloc.add(LoadCalendarData()),
@@ -153,7 +154,7 @@ class CalendarTab extends StatelessWidget {
 
   Widget _buildPendantBadge(String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20.r),

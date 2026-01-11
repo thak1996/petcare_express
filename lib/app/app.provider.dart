@@ -91,8 +91,8 @@ class AppProvider {
       create: (context) => DashBoardBloc(
         context.read<IAuthRepository>(),
         context.read<DashboardUseCase>(),
-        context.read<INotificationRepository>(),
         context.read<IScheduleRepository>(),
+        context.read<INotificationRepository>(),
       )..add(LoadDashboardData()),
     ),
     BlocProvider<CalendarBloc>(
@@ -100,6 +100,7 @@ class AppProvider {
         context.read<IAuthRepository>(),
         context.read<CalendarUseCase>(),
         context.read<IScheduleRepository>(),
+        context.read<INotificationRepository>(),
       )..add(LoadCalendarData()),
     ),
   ];

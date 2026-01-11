@@ -20,3 +20,8 @@ class TaskUpdatedExternal extends DashboardEvent {
 
   final ScheduleModel task;
 }
+
+class NotificationDismissedExternal extends DashboardEvent {
+  final String notificationId;
+  NotificationDismissedExternal(this.notificationId);
+}

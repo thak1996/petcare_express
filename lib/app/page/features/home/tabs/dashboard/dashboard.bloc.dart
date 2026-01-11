@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:result_dart/result_dart.dart';
 import '../../../../../core/models/auth/user.model.dart';
@@ -16,23 +15,36 @@ class DashBoardBloc extends Bloc<DashboardEvent, DashBoardTabState> {
   DashBoardBloc(
     this._authRepository,
     this._dashboardUseCase,
-    this._notificationRepo,
     this._scheduleRepository,
+    this._notificationRepo,
   ) : super(DashBoardTabInitial()) {
     on<LoadDashboardData>(_onLoadData);
     on<ToggleTask>(_onToggleTask);
     on<DismissNotification>(_onDismissNotification);
     on<TaskUpdatedExternal>(_onTaskUpdatedExternal);
+    on<NotificationDismissedExternal>(_onNotificationDismissedExternal);
     _subscription = _scheduleRepository.onTaskStatusChanged.listen(
       (task) => add(TaskUpdatedExternal(task)),
+    );
+    _notifSubscription = _notificationRepo.onNotificationDismissed.listen(
+      (id) => add(NotificationDismissedExternal(id)),
     );
   }
 
   final IAuthRepository _authRepository;
   final DashboardUseCase _dashboardUseCase;
+  late final StreamSubscription<String> _notifSubscription;
   final INotificationRepository _notificationRepo;
   final IScheduleRepository _scheduleRepository;
   late final StreamSubscription<ScheduleModel> _subscription;
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    _notifSubscription.cancel();
+    return super.close();
+  }
+
   Future<void> _onLoadData(
     LoadDashboardData event,
     Emitter<DashBoardTabState> emit,
@@ -59,6 +71,19 @@ class DashBoardBloc extends Bloc<DashboardEvent, DashBoardTabState> {
       ),
       (error) => emit(DashBoardTabError(error.toString())),
     );
+  }
+
+  void _onNotificationDismissedExternal(
+    NotificationDismissedExternal event,
+    Emitter<DashBoardTabState> emit,
+  ) {
+    if (state is! DashBoardTabSuccess) return;
+    final currentState = state as DashBoardTabSuccess;
+    final updatedList = currentState.notifications
+        .where((n) => n.id != event.notificationId)
+        .toList();
+
+    emit(currentState.copyWith(notifications: updatedList));
   }
 
   Future<void> _onToggleTask(
@@ -109,11 +134,5 @@ class DashBoardBloc extends Bloc<DashboardEvent, DashBoardTabState> {
       return task;
     }).toList();
     emit(currentState.copyWith(todayTasks: updatedTasks));
-  }
-
-  @override
-  Future<void> close() {
-    _subscription.cancel();
-    return super.close();
   }
 }

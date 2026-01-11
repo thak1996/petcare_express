@@ -27,3 +27,8 @@ class TaskUpdatedExternal extends CalendarEvent {
 
   final ScheduleModel task;
 }
+
+class NotificationDismissedExternal extends CalendarEvent {
+  final String notificationId;
+  NotificationDismissedExternal(this.notificationId);
+}

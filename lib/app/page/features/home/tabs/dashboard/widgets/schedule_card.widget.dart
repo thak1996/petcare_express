@@ -14,7 +14,7 @@ class ScheduleCardWidget extends StatelessWidget {
     final double opacity = task.isDone ? 0.5 : 1.0;
     return Container(
       margin: EdgeInsets.only(bottom: 10.h, left: 24.w, right: 24.w),
-      padding: EdgeInsets.all(16.r),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: task.isDone ? Colors.grey.shade50 : Colors.white,
         borderRadius: BorderRadius.circular(24.r),
@@ -77,7 +77,7 @@ class ScheduleCardWidget extends StatelessWidget {
                     _buildCategoryTag(),
                   ],
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Row(
                   children: [
                     Icon(
