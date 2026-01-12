@@ -17,7 +17,7 @@ class AppRouter {
   AppRouter(this._tokenStorage);
 
   late final GoRouter router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/',
     redirect: (context, state) async {
       final location = state.matchedLocation;
 
