@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/models/features/notification.model.dart';
+import '../../../../../core/models/features/schedule.model.dart';
 import '../../../../../core/repository/auth.repository.dart';
 import '../../../../../core/repository/notification.repository.dart';
 import '../../../../../core/repository/schedule.repository.dart';
@@ -69,11 +70,16 @@ class CalendarTab extends StatelessWidget {
                   ) =>
                     Builder(
                       builder: (context) {
-                        final filteredTasks = selectedPetId == null
-                            ? currentTasks
+                        var filteredTasks = selectedPetId == null
+                            ? List<ScheduleModel>.from(currentTasks)
                             : currentTasks
                                   .where((t) => t.petId == selectedPetId)
                                   .toList();
+                        filteredTasks.sort((a, b) {
+                          if (a.isDone && !b.isDone) return 1;
+                          if (!a.isDone && b.isDone) return -1;
+                          return a.time.compareTo(b.time);
+                        });
                         final pendingCount = filteredTasks
                             .where((t) => !t.isDone)
                             .length;
@@ -87,26 +93,24 @@ class CalendarTab extends StatelessWidget {
                         return SafeArea(
                           child: Column(
                             children: [
-                              // TODO: Ajustar o Subtitle para refletir com o nome do mês dinâmicamente
                               HeaderFeaturesWidget(
                                 style: HeaderStyle.feature,
                                 title: "Agenda de",
                                 subtitle: StringHelper.capitalize(monthName),
                                 notifications: notifications,
                               ),
-                              // TODO: Ajustar o Componente para ser possível clicar em "todos"
                               MiniPetSelectorWidget(
                                 pets: pets,
                                 selectedPetId: selectedPetId,
                                 onPetSelected: (id) =>
                                     bloc.add(FilterByPet(id)),
                               ),
-                              // TODO: Reduzir altura do Componente de Data
                               CalendarSliderWidget(
                                 selectedDate: selectedDate,
                                 onDateSelected: (date) =>
                                     bloc.add(ChangeSelectedDate(date)),
                               ),
+
                               SizedBox(height: 12.h),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 24.w),
