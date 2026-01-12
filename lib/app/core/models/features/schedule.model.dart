@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
-enum TaskType { health, food, activity }
+part 'schedule.model.g.dart';
 
+@HiveType(typeId: 2)
+enum TaskType {
+  @HiveField(0)
+  health,
+  @HiveField(1)
+  food,
+  @HiveField(2)
+  activity,
+}
+
+@HiveType(typeId: 1)
 class ScheduleModel {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String title;
+  @HiveField(2)
   final String time;
+  @HiveField(3)
   final String subtitle;
+  @HiveField(4)
   final TaskType type;
+  @HiveField(5)
   final bool isDone;
+  @HiveField(6)
   final String petId;
+  @HiveField(7)
   final String petName;
+  @HiveField(8)
   final String? petImage;
+  @HiveField(9)
+  final DateTime date;
 
   ScheduleModel({
     required this.id,
@@ -21,6 +44,7 @@ class ScheduleModel {
     required this.type,
     required this.petId,
     required this.petName,
+    required this.date,
     this.petImage,
     this.isDone = false,
   });
@@ -68,6 +92,7 @@ class ScheduleModel {
     String? petId,
     String? petName,
     String? petImage,
+    DateTime? date,
   }) {
     return ScheduleModel(
       id: id ?? this.id,
@@ -79,6 +104,7 @@ class ScheduleModel {
       petId: petId ?? this.petId,
       petName: petName ?? this.petName,
       petImage: petImage ?? this.petImage,
+      date: date ?? this.date,
     );
   }
 }

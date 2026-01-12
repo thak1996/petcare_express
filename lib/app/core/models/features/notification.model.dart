@@ -1,12 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
-enum NotificationType { warning, promo, info }
+part 'notification.model.g.dart';
 
+@HiveType(typeId: 3)
+enum NotificationType {
+  @HiveField(0)
+  warning,
+  @HiveField(1)
+  promo,
+  @HiveField(2)
+  info,
+}
+
+@HiveType(typeId: 4)
 class NotificationModel {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String title;
+  @HiveField(2)
   final String body;
+  @HiveField(3)
   final NotificationType type;
+  @HiveField(4)
   final bool isRead;
 
   NotificationModel({
