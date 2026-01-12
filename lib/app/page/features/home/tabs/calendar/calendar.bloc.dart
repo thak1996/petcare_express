@@ -56,7 +56,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       (data) => emit(
         CalendarSuccess(
           pets: data.pets,
-          todayTasks: data.tasks,
+          currentTasks: data.tasks,
           notifications: data.notifications,
           selectedDate: DateTime.now(),
           selectedPetId: null,
@@ -79,10 +79,30 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     emit(currentState.copyWith(notifications: updatedList));
   }
 
-  void _onChangeDate(ChangeSelectedDate event, Emitter<CalendarState> emit) {
+  Future<void> _onChangeDate(
+    ChangeSelectedDate event,
+    Emitter<CalendarState> emit,
+  ) async {
     if (state is! CalendarSuccess) return;
     final currentState = state as CalendarSuccess;
     emit(currentState.copyWith(selectedDate: event.date));
+    final userResult = await _authRepository.getCurrentUser();
+    final user = userResult.getOrNull();
+    if (user == null) return;
+    final result = await _scheduleRepository.getTasksByDate(
+      user.id.toString(),
+      event.date,
+    );
+
+    result.fold(
+      (newTasks) => emit(
+        (state as CalendarSuccess).copyWith(
+          currentTasks: newTasks,
+          selectedDate: event.date,
+        ),
+      ),
+      (error) => emit(CalendarError("Erro ao trocar data")),
+    );
   }
 
   void _onFilterByPet(FilterByPet event, Emitter<CalendarState> emit) {
@@ -103,10 +123,10 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   ) async {
     if (state is! CalendarSuccess) return;
     final currentState = state as CalendarSuccess;
-    final newTasks = currentState.todayTasks.map((t) {
+    final newTasks = currentState.currentTasks.map((t) {
       return t.id == event.task.id ? t.copyWith(isDone: !t.isDone) : t;
     }).toList();
-    emit(currentState.copyWith(todayTasks: newTasks));
+    emit(currentState.copyWith(currentTasks: newTasks));
     final result = await _scheduleRepository.updateTaskStatus(event.task.id);
     if (result.isError()) {
       add(LoadCalendarData());
@@ -119,11 +139,11 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   ) {
     if (state is! CalendarSuccess) return;
     final currentState = state as CalendarSuccess;
-    final updatedTasks = currentState.todayTasks.map((task) {
+    final updatedTasks = currentState.currentTasks.map((task) {
       if (task.id == event.task.id) return event.task;
       return task;
     }).toList();
-    emit(currentState.copyWith(todayTasks: updatedTasks));
+    emit(currentState.copyWith(currentTasks: updatedTasks));
   }
 
   @override

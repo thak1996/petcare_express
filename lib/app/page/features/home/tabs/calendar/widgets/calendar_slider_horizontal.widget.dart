@@ -15,7 +15,7 @@ class CalendarSliderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 95.h,
+      height: 65.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -25,13 +25,12 @@ class CalendarSliderWidget extends StatelessWidget {
           final date = DateTime.now().add(Duration(days: index));
           final bool isSelected =
               date.day == selectedDate.day && date.month == selectedDate.month;
-
           return GestureDetector(
             onTap: () => onDateSelected(date),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
               width: 65.w,
-              margin: EdgeInsets.only(right: 12.w),
+              margin: EdgeInsets.only(right: 6.w),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primary : Colors.white,
                 borderRadius: BorderRadius.circular(24.r),
@@ -61,7 +60,7 @@ class CalendarSliderWidget extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 4.h),
                   Text(
                     date.day.toString().padLeft(2, '0'),
                     style: TextStyle(

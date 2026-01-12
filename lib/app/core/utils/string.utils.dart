@@ -6,20 +6,20 @@ class StringHelper {
         .split(' ')
         .where((s) => s.isNotEmpty)
         .toList();
-    if (parts.length == 1) return _capitalize(parts[0]);
-    String firstName = _capitalize(parts[0]);
+    if (parts.length == 1) return capitalize(parts[0]);
+    String firstName = capitalize(parts[0]);
     String secondNameAbbreviated = "${parts[1][0].toUpperCase()}.";
     String restOfName = "";
     if (parts.length > 2) {
       Iterable<String> capitalizedRest = parts
           .sublist(2)
-          .map((word) => _capitalize(word));
+          .map((word) => capitalize(word));
       restOfName = " ${capitalizedRest.join(' ')}";
     }
     return "$firstName $secondNameAbbreviated$restOfName";
   }
 
-  static String _capitalize(String text) {
+  static String capitalize(String text) {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }

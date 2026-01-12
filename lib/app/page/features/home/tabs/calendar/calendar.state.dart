@@ -19,10 +19,10 @@ final class CalendarSuccess extends CalendarState {
   final DateTime selectedDate;
   final List<PetModel> pets;
   final List<NotificationModel> notifications;
-  final List<ScheduleModel> todayTasks;
+  final List<ScheduleModel> currentTasks;
 
   const CalendarSuccess({
-    required this.todayTasks,
+    required this.currentTasks,
     required this.pets,
     required this.selectedDate,
     required this.notifications,
@@ -34,7 +34,7 @@ final class CalendarSuccess extends CalendarState {
     DateTime? selectedDate,
     List<NotificationModel>? notifications,
     List<PetModel>? pets,
-    List<ScheduleModel>? todayTasks,
+    List<ScheduleModel>? currentTasks,
     bool clearPetFilter = false,
   }) {
     return CalendarSuccess(
@@ -44,7 +44,7 @@ final class CalendarSuccess extends CalendarState {
       selectedDate: selectedDate ?? this.selectedDate,
       notifications: notifications ?? this.notifications,
       pets: pets ?? this.pets,
-      todayTasks: todayTasks ?? this.todayTasks,
+      currentTasks: currentTasks ?? this.currentTasks,
     );
   }
 
@@ -54,7 +54,7 @@ final class CalendarSuccess extends CalendarState {
     selectedDate,
     pets,
     notifications,
-    todayTasks,
+    currentTasks,
   ];
 }
 

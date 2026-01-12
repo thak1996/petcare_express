@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import '../../../../../core/models/features/notification.model.dart';
 import '../../../../../core/repository/auth.repository.dart';
 import '../../../../../core/repository/notification.repository.dart';
 import '../../../../../core/repository/schedule.repository.dart';
 import '../../../../../core/theme/app.colors.dart';
 import '../../../../../core/theme/app.effects.dart';
+import '../../../../../core/utils/string.utils.dart';
 import '../../../../../core/widgets/alert_dialog.widget.dart';
 import '../../../../../core/widgets/error_state.widget.dart';
 import '../../../../../core/widgets/header_features.widget.dart';
@@ -20,6 +22,13 @@ import '../dashboard/widgets/schedule_card.widget.dart';
 
 class CalendarTab extends StatelessWidget {
   const CalendarTab({super.key});
+
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +61,7 @@ class CalendarTab extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   ),
                   CalendarSuccess(
-                    :final todayTasks,
+                    :final currentTasks,
                     :final pets,
                     :final selectedPetId,
                     :final selectedDate,
@@ -61,25 +70,30 @@ class CalendarTab extends StatelessWidget {
                     Builder(
                       builder: (context) {
                         final filteredTasks = selectedPetId == null
-                            ? todayTasks
-                            : todayTasks
+                            ? currentTasks
+                            : currentTasks
                                   .where((t) => t.petId == selectedPetId)
                                   .toList();
                         final pendingCount = filteredTasks
                             .where((t) => !t.isDone)
                             .length;
+                        final monthName = DateFormat(
+                          'MMMM yyyy',
+                          'pt_BR',
+                        ).format(selectedDate);
+                        final listTitle = _isToday(selectedDate)
+                            ? "Tarefas de Hoje"
+                            : "Tarefas de ${DateFormat('dd/MM', 'pt_BR').format(selectedDate)}";
                         return SafeArea(
                           child: Column(
                             children: [
-                              SizedBox(height: 20.h),
                               // TODO: Ajustar o Subtitle para refletir com o nome do mês dinâmicamente
                               HeaderFeaturesWidget(
                                 style: HeaderStyle.feature,
                                 title: "Agenda de",
-                                subtitle: "Outubro 2023",
+                                subtitle: StringHelper.capitalize(monthName),
                                 notifications: notifications,
                               ),
-                              SizedBox(height: 20.h),
                               // TODO: Ajustar o Componente para ser possível clicar em "todos"
                               MiniPetSelectorWidget(
                                 pets: pets,
@@ -87,14 +101,13 @@ class CalendarTab extends StatelessWidget {
                                 onPetSelected: (id) =>
                                     bloc.add(FilterByPet(id)),
                               ),
-                              SizedBox(height: 16.h),
                               // TODO: Reduzir altura do Componente de Data
                               CalendarSliderWidget(
                                 selectedDate: selectedDate,
                                 onDateSelected: (date) =>
                                     bloc.add(ChangeSelectedDate(date)),
                               ),
-                              SizedBox(height: 24.h),
+                              SizedBox(height: 12.h),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                                 child: Row(
@@ -102,7 +115,7 @@ class CalendarTab extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      "Tarefas de Hoje",
+                                      listTitle,
                                       style: TextStyle(
                                         fontSize: 18.sp,
                                         fontWeight: FontWeight.bold,
@@ -115,12 +128,12 @@ class CalendarTab extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 16.h),
+                              SizedBox(height: 12.h),
                               Expanded(
                                 child: filteredTasks.isEmpty
                                     ? _buildEmptyState()
                                     : ListView.builder(
-                                        padding: EdgeInsets.only(bottom: 20.h),
+                                        padding: EdgeInsets.only(bottom: 80.h),
                                         physics: const BouncingScrollPhysics(),
                                         itemCount: filteredTasks.length,
                                         itemBuilder: (context, index) {
@@ -154,7 +167,7 @@ class CalendarTab extends StatelessWidget {
 
   Widget _buildPendantBadge(String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20.r),

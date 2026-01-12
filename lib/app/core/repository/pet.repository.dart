@@ -1,6 +1,6 @@
-import 'dart:developer';
-import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:result_dart/result_dart.dart';
+import '../database/hive_config.dart';
 import '../models/features/pet.model.dart';
 
 abstract class IPetRepository {
@@ -10,49 +10,35 @@ abstract class IPetRepository {
 }
 
 class PetRepositoryImpl implements IPetRepository {
-  final List<PetModel> mockPets = [
-    PetModel(
-      id: "1",
-      name: "Rex",
-      imageUrl: "https://placedog.net/200",
-      borderColor: Colors.teal,
-      hasWarning: true,
-    ),
-    PetModel(
-      id: "2",
-      name: "Luna",
-      imageUrl: "https://placedog.net/201",
-      borderColor: Colors.orange,
-      hasWarning: true,
-    ),
-    PetModel(
-      id: "3",
-      name: "Thor",
-      imageUrl: "https://placedog.net/202",
-      borderColor: Colors.purple,
-      hasWarning: false,
-    ),
-  ];
-  
+  final Box<PetModel> _box = Hive.box<PetModel>(HiveConfig.petBoxName);
+
   @override
   AsyncResult<List<PetModel>> getPetsForUser(String userId) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 800));
-      return Success(mockPets);
+      final pets = _box.values.toList();
+      return Success(pets);
     } catch (e) {
-      return Failure(Exception("Erro ao buscar pets"));
+      return Failure(Exception("Erro ao buscar pets: $e"));
     }
   }
 
   @override
   AsyncResult<Unit> addPetForUser(String userId, PetModel pet) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return Success(unit);
+    try {
+      await _box.put(pet.id, pet);
+      return Success(unit);
+    } catch (e) {
+      return Failure(Exception("Erro ao adicionar pet: $e"));
+    }
   }
 
   @override
   AsyncResult<Unit> removePetForUser(String userId, String petId) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return Success(unit);
+    try {
+      await _box.delete(petId);
+      return Success(unit);
+    } catch (e) {
+      return Failure(Exception("Erro ao remover pet: $e"));
+    }
   }
 }

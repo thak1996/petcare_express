@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:result_dart/result_dart.dart';
+import '../database/hive_config.dart';
 import '../models/features/schedule.model.dart';
 
 abstract class IScheduleRepository {
@@ -16,45 +18,39 @@ abstract class IScheduleRepository {
 }
 
 class ScheduleRepositoryImpl implements IScheduleRepository {
-  final List<ScheduleModel> _mockTasks = [
-    ScheduleModel(
-      id: '1',
-      title: 'Vacina Antirrábica',
-      time: '14:00',
-      subtitle: 'Veterinário Central',
-      type: TaskType.health,
-      isDone: false,
-      petId: 'pet1',
-      petName: 'Rex',
-    ),
-    ScheduleModel(
-      id: '2',
-      title: 'Jantar do Rex',
-      time: '18:30',
-      subtitle: 'Ração Premium',
-      type: TaskType.food,
-      isDone: false,
-      petId: 'pet1',
-      petName: 'Rex',
-    ),
-    ScheduleModel(
-      id: '3',
-      title: 'Passeio Matinal',
-      time: '08:15',
-      subtitle: 'Parque da Cidade',
-      type: TaskType.activity,
-      isDone: true,
-      petId: 'pet2',
-      petName: 'Luna',
-    ),
-  ];
+  final Box<ScheduleModel> _box = Hive.box<ScheduleModel>(
+    HiveConfig.scheduleBoxName,
+  );
 
   final _statusChangeController = StreamController<ScheduleModel>.broadcast();
 
   @override
+  Stream<ScheduleModel> get onTaskStatusChanged =>
+      _statusChangeController.stream;
+
+  @override
   AsyncResult<Unit> addTaskForUser(String userId, ScheduleModel task) async {
-    _mockTasks.add(task);
-    return Success(unit);
+    try {
+      await _box.put(task.id, task);
+      return Success(unit);
+    } catch (e) {
+      return Failure(Exception("Erro ao adicionar tarefa: $e"));
+    }
+  }
+
+  @override
+  AsyncResult<Unit> removeTaskForUser(String userId, String taskId) async {
+    try {
+      await _box.delete(taskId);
+      return Success(unit);
+    } catch (e) {
+      return Failure(Exception("Erro ao remover tarefa: $e"));
+    }
+  }
+
+  @override
+  AsyncResult<List<ScheduleModel>> getTodayTasks(String userId) {
+    return getTasksByDate(userId, DateTime.now());
   }
 
   @override
@@ -63,41 +59,40 @@ class ScheduleRepositoryImpl implements IScheduleRepository {
     DateTime date, {
     String? petId,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    return Success(_mockTasks);
-  }
+    try {
+      final tasks = _box.values.where((task) {
+        final taskDate = task.date;
+        final isSameDate =
+            taskDate.year == date.year &&
+            taskDate.month == date.month &&
+            taskDate.day == date.day;
+        if (!isSameDate) return false;
+        if (petId != null && task.petId != petId) {
+          return false;
+        }
 
-  @override
-  AsyncResult<List<ScheduleModel>> getTodayTasks(String userId) async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    return Success(_mockTasks);
-  }
+        return true;
+      }).toList();
 
-  @override
-  Stream<ScheduleModel> get onTaskStatusChanged =>
-      _statusChangeController.stream;
-
-  @override
-  AsyncResult<Unit> removeTaskForUser(String userId, String taskId) async {
-    _mockTasks.removeWhere((task) => task.id == taskId);
-    return Success(unit);
+      return Success(tasks);
+    } catch (e) {
+      return Failure(Exception("Erro ao buscar tarefas: $e"));
+    }
   }
 
   @override
   AsyncResult<Unit> updateTaskStatus(String taskId) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 300));
-      final index = _mockTasks.indexWhere((task) => task.id == taskId);
-      if (index != -1) {
-        final oldTask = _mockTasks[index];
-        final newTask = oldTask.copyWith(isDone: !oldTask.isDone);
-        _mockTasks[index] = newTask;
+      final task = _box.get(taskId);
+      if (task != null) {
+        final newTask = task.copyWith(isDone: !task.isDone);
+        await _box.put(taskId, newTask);
         _statusChangeController.add(newTask);
         return Success(unit);
       }
       return Failure(Exception("Tarefa não encontrada"));
     } catch (e) {
-      return Failure(Exception(e.toString()));
+      return Failure(Exception("Erro ao atualizar status: $e"));
     }
   }
 }

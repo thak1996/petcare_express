@@ -1,7 +1,9 @@
-import 'package:petcare_express/app/core/service/firebase/firebase_auth.service.dart';
+import 'dart:developer';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:result_dart/result_dart.dart';
-import '../exceptions/auth.exception.dart';
+import '../database/hive_config.dart';
 import '../models/auth/user.model.dart';
+import '../service/firebase/firebase_auth.service.dart';
 import '../service/storage/token.storage.dart';
 
 abstract class IAuthRepository {
@@ -15,7 +17,8 @@ abstract class IAuthRepository {
 class AuthRepositoryImpl implements IAuthRepository {
   final ITokenStorage _tokenStorage;
   final IFirebaseAuthService _firebaseAuthService;
-  UserModel? _cachedUser;
+
+  final Box<UserModel> _userBox = Hive.box<UserModel>(HiveConfig.userBoxName);
 
   AuthRepositoryImpl(this._tokenStorage, this._firebaseAuthService);
 
@@ -25,8 +28,10 @@ class AuthRepositoryImpl implements IAuthRepository {
       email: userModel.email ?? '',
       password: userModel.password ?? '',
     );
+
     return result.fold((user) async {
       await _tokenStorage.saveToken(user.token ?? '');
+      await _userBox.put('current_user', user);
       return Success(unit);
     }, (error) => Failure(error));
   }
@@ -38,8 +43,10 @@ class AuthRepositoryImpl implements IAuthRepository {
       email: userModel.email ?? '',
       password: userModel.password ?? '',
     );
+
     return result.fold((user) async {
       await _tokenStorage.saveToken(user.token ?? '');
+      await _userBox.put('current_user', user);
       return Success(unit);
     }, (error) => Failure(error));
   }
@@ -54,14 +61,32 @@ class AuthRepositoryImpl implements IAuthRepository {
   @override
   AsyncResult<Unit> logout() async {
     await _tokenStorage.clear();
+    await _userBox.delete('current_user');
     return Success(unit);
   }
 
   @override
   AsyncResult<UserModel> getCurrentUser() async {
-    if (_cachedUser != null) return Success(_cachedUser!);
+    try {
+      final cachedUser = _userBox.get('current_user');
+      if (cachedUser != null) {
+        _refreshUserCache();
+        return Success(cachedUser);
+      }
+      final result = await _firebaseAuthService.getCurrentUser();
+      return result.fold((user) {
+        _userBox.put('current_user', user);
+        return Success(user);
+      }, (error) => Failure(error));
+    } catch (e) {
+      return _firebaseAuthService.getCurrentUser();
+    }
+  }
+
+  void _refreshUserCache() async {
     final result = await _firebaseAuthService.getCurrentUser();
-    result.fold((user) => _cachedUser = user, (error) {});
-    return result;
+    result.fold((user) async {
+      await _userBox.put('current_user', user);
+    }, (error) => log('Erro ao atualizar cache de usuário: $error'));
   }
 }

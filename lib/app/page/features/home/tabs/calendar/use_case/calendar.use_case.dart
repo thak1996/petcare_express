@@ -14,22 +14,20 @@ class CalendarUseCase {
 
   CalendarUseCase(this._petRepo, this._scheduleRepo, this._notificationRepo);
 
-  AsyncResult<CalendarDataDto> execute(String userId) async {
+  AsyncResult<CalendarDataDto> execute(String userId, {DateTime? date}) async {
     try {
+      final targetDate = date ?? DateTime.now();
       final results = await Future.wait([
         _petRepo.getPetsForUser(userId),
-        _scheduleRepo.getTodayTasks(userId),
+        _scheduleRepo.getTasksByDate(userId, targetDate),
         _notificationRepo.getNotifications(userId),
       ]);
-
       final petsResult = results[0] as Result<List<PetModel>>;
       final tasksResult = results[1] as Result<List<ScheduleModel>>;
       final notifResult = results[2] as Result<List<NotificationModel>>;
-
       final pets = petsResult.getOrDefault([]);
       final tasks = tasksResult.getOrDefault([]);
       final notifications = notifResult.getOrDefault([]);
-
       return Success(
         CalendarDataDto(pets: pets, tasks: tasks, notifications: notifications),
       );
